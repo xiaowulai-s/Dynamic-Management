@@ -1,0 +1,244 @@
+<template>
+  <div class="layout-container">
+    <!-- 侧边栏 -->
+    <el-aside :width="isCollapse ? '64px' : '240px'" class="sidebar" :class="{ 'sidebar-collapsed': isCollapse }">
+      <div class="sidebar-logo">
+        <span class="logo-text">{{ isCollapse ? 'DM' : '设备管理系统' }}</span>
+      </div>
+
+      <el-menu
+        :default-active="route.path"
+        :collapse="isCollapse"
+        router
+      >
+        <el-menu-item index="/dashboard">
+          <el-icon><Odometer /></el-icon>
+          <template #title>仪表盘</template>
+        </el-menu-item>
+
+        <el-menu-item index="/equipment">
+          <el-icon><Box /></el-icon>
+          <template #title>设备管理</template>
+        </el-menu-item>
+
+        <el-menu-item index="/logs">
+          <el-icon><Document /></el-icon>
+          <template #title>日志管理</template>
+        </el-menu-item>
+
+        <el-menu-item index="/analytics">
+          <el-icon><TrendCharts /></el-icon>
+          <template #title>统计分析</template>
+        </el-menu-item>
+
+        <el-menu-item index="/settings" v-if="userStore.isAdmin">
+          <el-icon><Setting /></el-icon>
+          <template #title>系统设置</template>
+        </el-menu-item>
+      </el-menu>
+    </el-aside>
+
+    <!-- 移动端遮罩 -->
+    <div class="mobile-overlay" v-if="mobileMenuOpen" @click="closeMobileMenu"></div>
+
+    <!-- 主体内容 -->
+    <div class="main-content">
+      <!-- 顶部导航 -->
+      <el-header class="header">
+        <div class="header-left">
+          <el-button class="menu-toggle-btn" :icon="isCollapse ? 'Expand' : 'Fold'" @click="toggleSidebar" />
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route.meta.title">{{ route.meta.title }}</el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
+
+        <div class="header-right">
+          <ThemeToggle />
+          <NotificationsPopover />
+          <el-dropdown>
+            <span class="user-dropdown">
+              <el-icon><User /></el-icon>
+              <span class="user-name">{{ userStore.username }}</span>
+              <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="$router.push('/profile')">个人信息</el-dropdown-item>
+                <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+      </el-header>
+
+      <!-- 内容区域 -->
+      <div class="content">
+        <router-view />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  Odometer,
+  Box,
+  Document,
+  TrendCharts,
+  Setting,
+  User,
+  ArrowDown,
+  Expand,
+  Fold
+} from '@element-plus/icons-vue'
+import NotificationsPopover from '@/components/NotificationsPopover.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+
+const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
+
+const isCollapse = ref(false)
+const mobileMenuOpen = ref(false)
+
+const toggleSidebar = () => {
+  isCollapse.value = !isCollapse.value
+}
+
+const closeMobileMenu = () => {
+  mobileMenuOpen.value = false
+}
+
+const handleLogout = () => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    userStore.logout()
+    ElMessage.success('已退出登录')
+    router.push('/login')
+  }).catch(() => {})
+}
+</script>
+
+<style scoped>
+.sidebar-logo {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: var(--text-lg);
+  font-weight: var(--font-w-semibold);
+  color: #fff;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar {
+  transition: width var(--transition-base);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.menu-toggle-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+.menu-toggle-btn:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover);
+}
+
+.user-dropdown {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.user-dropdown:hover {
+  color: var(--color-primary-500);
+}
+
+.user-name {
+  font-weight: var(--font-w-medium);
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-6);
+  overflow-y: auto;
+  background-color: var(--surface-page);
+}
+
+/* 移动端覆盖层 */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: calc(var(--z-modal) - 1);
+}
+
+/* 移动端侧边栏 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: var(--z-modal);
+    transform: translateX(-100%);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  .mobile-overlay {
+    display: block;
+  }
+  .content {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: var(--space-3);
+  }
+}
+</style>

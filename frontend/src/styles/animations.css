@@ -1,0 +1,464 @@
+/* ============================================================
+   设备信息动态管理系统 — Material Design Animations v3.0
+   基于 Ant Design + Material Design 融合方案
+   更新: 2026-07-13 UI Redesign
+   ============================================================ */
+
+/* ========== Fade Animations ========== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ========== Slide Animations ========== */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ========== Scale Animations (Material Ripple效果) ========== */
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* ========== Ripple Effect (Material Design) ========== */
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ========== Spin Animation ========== */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ========== Shimmer Loading (骨架屏) ========== */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ========== Pulse Animation (呼吸效果) ========== */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+/* ========== Bounce Animation ========== */
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ========== Shake Animation (错误提示) ========== */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* ========== Swing Animation (摇晃) ========== */
+
+@keyframes swing {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(15deg); }
+  40% { transform: rotate(-15deg); }
+  60% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* ========== Jello Animation ========== */
+
+@keyframes jello {
+  0% { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(1.25, 0.75, 1); }
+  40% { transform: scale3d(0.75, 1.25, 1); }
+  50% { transform: scale3d(1.15, 0.85, 1); }
+  65% { transform: scale3d(0.95, 1.05, 1); }
+  75% { transform: scale3d(1.05, 0.95, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+/* ========== HeartBeat Animation ========== */
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.3); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.3); }
+  70% { transform: scale(1); }
+}
+
+/* ========== Flip Animation ========== */
+
+@keyframes flipInX {
+  from {
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    transform: perspective(400px) rotate3d(1, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes flipOutX {
+  from {
+    transform: perspective(400px) rotate3d(1, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    opacity: 0;
+  }
+}
+
+/* ========== Zoom Animations ========== */
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* ========== Light Speed Animations ========== */
+
+@keyframes lightSpeedInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0) skewX(-30deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes lightSpeedOutRight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+  }
+}
+
+/* ========== Rotate Animation ========== */
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ========== Roll Animation ========== */
+
+@keyframes rollIn {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0) rotate(-120deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ============================================================
+   Animation Classes (工具类)
+   ============================================================ */
+
+/* Fade */
+.animate-fade-in { animation: fadeIn var(--duration-normal) var(--ease-default); }
+.animate-fade-out { animation: fadeOut var(--duration-normal) var(--ease-default); }
+
+/* Slide */
+.animate-slide-in-up { animation: slideInUp var(--duration-normal) var(--ease-default); }
+.animate-slide-in-down { animation: slideInDown var(--duration-normal) var(--ease-default); }
+.animate-slide-in-left { animation: slideInLeft var(--duration-normal) var(--ease-default); }
+.animate-slide-in-right { animation: slideInRight var(--duration-normal) var(--ease-default); }
+
+/* Scale */
+.animate-scale-in { animation: scaleIn var(--duration-normal) var(--ease-default); }
+.animate-scale-out { animation: scaleOut var(--duration-normal) var(--ease-default); }
+
+/* Zoom */
+.animate-zoom-in { animation: zoomIn var(--duration-normal) var(--ease-default); }
+.animate-zoom-out { animation: zoomOut var(--duration-normal) var(--ease-default); }
+
+/* Spin */
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* Pulse */
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* Bounce */
+.animate-bounce { animation: bounce 1s infinite; }
+
+/* Shimmer (骨架屏) */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-100) 25%,
+    var(--color-neutral-200) 50%,
+    var(--color-neutral-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+  border-radius: 2px;
+}
+
+.skeleton-title {
+  height: 1.5em;
+  width: 60%;
+  margin-bottom: 1em;
+}
+
+.skeleton-card {
+  height: 200px;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 120px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   Page Transition (Vue Router)
+   ============================================================ */
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity var(--duration-normal) var(--ease-default),
+              transform var(--duration-normal) var(--ease-default);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0);
+}
+
+/* ============================================================
+   List Stagger Animation (列表交错动画)
+   ============================================================ */
+
+.list-item-enter-active {
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.list-item-enter-from {
+  opacity: 0;
+  transform: translate3d(-20px, 0, 0);
+}
+
+.list-item-leave-active {
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.list-item-leave-to {
+  opacity: 0;
+  transform: translate3d(20px, 0, 0);
+}
+
+/* ============================================================
+   Modal Animation (对话框)
+   ============================================================ */
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* ============================================================
+   Dropdown Animation (下拉菜单)
+   ============================================================ */
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all var(--duration-fast) var(--ease-default);
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* ============================================================
+   Collapse Animation (折叠面板)
+   ============================================================ */
+
+.collapse-enter-active,
+.collapse-leave-active {
+  transition: height var(--duration-normal) var(--ease-default),
+              opacity var(--duration-normal) var(--ease-default);
+}
+
+.collapse-enter-from,
+.collapse-leave-to {
+  height: 0;
+  opacity: 0;
+}
+
+/* ============================================================
+   Progress Bar Animation (进度条)
+   ============================================================ */
+
+@keyframes progress-stripes {
+  from { background-position: 40px 0; }
+  to { background-position: 0 0; }
+}
+
+.progress-bar-striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 40px 40px;
+  animation: progress-stripes 1s linear infinite;
+}
+
+/* ============================================================
+   Accessibility (尊重用户动画偏好)
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
