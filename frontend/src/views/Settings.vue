@@ -83,6 +83,9 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getApprovalConfigs, updateApprovalConfig, getSystemConfigs, updateSystemConfig } from '@/api'
+import { useSiteTitle } from '@/composables/useSiteTitle'
+
+const { setSiteTitle } = useSiteTitle()
 
 interface ApprovalConfig {
   id: number
@@ -121,7 +124,9 @@ const configKeyLabels: Record<string, string> = {
   maintenance_cycle: '保养周期（天）',
   equipment_life: '设备寿命（年）',
   calibration_cycle: '校准周期（天）',
-  warning_days: '预警提醒天数'
+  warning_days: '预警提醒天数',
+  site_title_zh: '系统中文名称（侧边栏主标题）',
+  site_title_en: '系统英文名称（侧边栏副标题）'
 }
 
 const getLogTypeLabel = (key: string): string => {
@@ -153,7 +158,14 @@ const loadSystemConfigs = async () => {
   try {
     loading.value = true
     const res = await getSystemConfigs()
-    systemConfigs.value = res.data
+    // 字符串类型的配置项，后端以 JSON 字符串存储（带引号），显示时去掉首尾引号
+    systemConfigs.value = (res.data || []).map((c: SystemConfig) => {
+      const val = c.config_value
+      if (typeof val === 'string' && val.startsWith('"') && val.endsWith('"')) {
+        return { ...c, config_value: val.slice(1, -1) }
+      }
+      return c
+    })
   } catch (error) {
     ElMessage.error('加载系统配置失败')
   } finally {
@@ -183,8 +195,21 @@ const handleApprovalConfigChange = async (config: ApprovalConfig) => {
 
 const handleSystemConfigChange = async (config: SystemConfig) => {
   try {
-    await updateSystemConfig(config.config_key, { config_value: config.config_value })
+    // 字符串类型配置项（site_title_*）保存时加引号，与后端 JSON 字符串格式一致
+    const isStringType = config.config_key === 'site_title_zh' || config.config_key === 'site_title_en'
+    const payload = isStringType
+      ? { ...config, config_value: `"${config.config_value}"` }
+      : config
+    await updateSystemConfig(config.config_key, { config_value: payload.config_value })
     ElMessage.success('更新成功')
+    // 保存站点标题后实时更新侧边栏
+    if (isStringType) {
+      const zh = systemConfigs.value.find(c => c.config_key === 'site_title_zh')
+      const en = systemConfigs.value.find(c => c.config_key === 'site_title_en')
+      const zhVal = zh ? String(zh.config_value) : ''
+      const enVal = en ? String(en.config_value) : ''
+      setSiteTitle(zhVal, enVal)
+    }
   } catch (error) {
     ElMessage.error('更新失败')
   }

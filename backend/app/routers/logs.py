@@ -483,8 +483,8 @@ async def update_log(
     """
     更新日志
     - 只能更新description字段
-    - 只能由创建者或管理员更新
-    - 只能更新待审批状态的日志
+    - 普通用户：仅能更新自己创建的、待审批或已驳回状态的日志
+    - 管理员/超级管理员：可更新任意待审批或已驳回状态的日志
     """
     log = db.query(Log).filter(Log.id == log_id).first()
 
@@ -494,18 +494,21 @@ async def update_log(
             detail="日志不存在"
         )
 
-    # 检查权限：仅创建者和管理员可更新
-    if log.operator_id != current_user.id and current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="无权限更新此日志"
-        )
+    # 权限校验（Q26: 三级角色细分）
+    is_admin_role = current_user.role in ("admin", "super_admin")
+    if not is_admin_role:
+        # 普通用户：仅能更新自己创建的日志
+        if log.operator_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="无权限更新他人日志"
+            )
 
-    # 只能更新待审批状态的日志
-    if log.status != "pending":
+    # 状态校验：待审批或已驳回状态的日志可更新（已通过的不可改）
+    if log.status not in ("pending", "rejected"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="只能更新待审批状态的日志"
+            detail="只能更新待审批或已驳回状态的日志"
         )
 
     # 只允许更新description
@@ -531,7 +534,7 @@ async def approve_log(
 ):
     """审批日志（通过或驳回）"""
     # 检查权限
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可审批日志"
@@ -576,7 +579,7 @@ async def delete_log(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """删除日志"""
+    """删除日志（Q26: 仅管理员/超级管理员可删除）"""
     log = db.query(Log).filter(Log.id == log_id).first()
 
     if not log:
@@ -585,11 +588,11 @@ async def delete_log(
             detail="日志不存在"
         )
 
-    # 检查权限：仅创建者和管理员可删除
-    if log.operator_id != current_user.id and current_user.role != "admin":
+    # 权限校验：仅管理员/超级管理员可删除日志，普通用户无权删除
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="无权限删除此日志"
+            detail="无权限删除日志，仅管理员可删除"
         )
 
     # 级联删除具体日志

@@ -83,13 +83,13 @@ a:hover { color: var(--text-link-hover); }
    Element Plus 组件深度定制 (Material Design 风格)
    ============================================================ */
 
-/* Button - Ant Design + Material 融合 */
+/* Button - 方案A：克制，无阴影，无悬浮上移 */
 .el-button {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-medium);
   border-radius: var(--radius-sm);
   transition: all var(--duration-fast) var(--ease-default);
-  letter-spacing: 0.01em;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  letter-spacing: 0;
+  box-shadow: none;
 }
 
 .el-button--primary {
@@ -99,30 +99,28 @@ a:hover { color: var(--text-link-hover); }
   --el-button-hover-border-color: var(--color-primary-700);
   --el-button-active-bg-color: var(--color-primary-800);
   --el-button-active-border-color: var(--color-primary-800);
-  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.25);
+  box-shadow: none;
 
-  /* Hover: 悬浮上移 + 阴影加深 */
   &:hover {
-    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.35);
-    transform: translateY(-1px);
+    box-shadow: none;
+    transform: none;
   }
 
-  /* Active: 点击缩放 */
   &:active {
-    transform: translateY(0) scale(0.97);
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.25);
+    transform: scale(0.98);
+    box-shadow: none;
   }
 }
 
 .el-button--default {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: none;
 
   &:hover {
-    border-color: var(--color-primary-500);
+    border-color: var(--color-primary-400);
     color: var(--color-primary-600);
     background: var(--color-primary-50);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
+    box-shadow: none;
+    transform: none;
   }
 }
 
@@ -138,23 +136,23 @@ a:hover { color: var(--text-link-hover); }
 }
 
 .el-button:active {
-  transform: scale(0.96);
+  transform: scale(0.98);
 }
 
-/* Card - Material Design 悬浮效果 */
+/* Card - 方案A：细线分隔，无投影，hover 仅边框微变 */
 .el-card {
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  background-color: var(--surface-card);
-  transition: all var(--transition-base);
+  box-shadow: none;
+  background-color: var(--surface-overlay);
+  transition: border-color var(--transition-fast);
   overflow: hidden;
 }
 
 .el-card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
-  transform: translate3d(0, -4px, 0);
+  box-shadow: none;
+  border-color: var(--color-primary-300);
+  transform: none;
 }
 
 .el-card__header {
@@ -170,14 +168,16 @@ a:hover { color: var(--text-link-hover); }
   padding: var(--space-6);
 }
 
-/* Input */
+/* Input
+   Element Plus 默认用 box-shadow inset 渲染输入框边框，
+   本系统改用真实 border，保证未聚焦时也始终显示边框。 */
 .el-input__wrapper {
   border-radius: var(--radius-sm);
-  border-color: var(--border-default);
+  border: 1px solid var(--border-default);
   background-color: var(--surface-input);
   box-shadow: none;
-  transition: all var(--transition-fast);
-  padding: 8px 16px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  padding: 4px 12px;
 }
 
 .el-input__wrapper:hover {
@@ -187,7 +187,44 @@ a:hover { color: var(--text-link-hover); }
 .el-input__wrapper.is-focus,
 .el-input__wrapper:focus-within {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 4px rgba(100, 116, 139, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Select（Element Plus 新版使用 .el-select__wrapper，同样依赖 box-shadow 渲染边框） */
+.el-select__wrapper {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-input);
+  box-shadow: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.el-select__wrapper:hover {
+  border-color: var(--border-hover);
+}
+
+.el-select__wrapper.is-focused,
+.el-select__wrapper:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Textarea */
+.el-textarea__inner {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-input);
+  box-shadow: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.el-textarea__inner:hover {
+  border-color: var(--border-hover);
+}
+
+.el-textarea__inner:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .el-input__inner {
@@ -203,7 +240,7 @@ a:hover { color: var(--text-link-hover); }
 /* Select */
 .el-select .el-input__wrapper.is-focus,
 .el-select .el-input__wrapper:focus-within {
-  box-shadow: 0 0 0 4px rgba(100, 116, 139, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* Table */
@@ -238,6 +275,25 @@ a:hover { color: var(--text-link-hover); }
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
 }
+
+/* === 表格操作列规范（修复"操作按钮换行、不整齐"问题） ===
+   所有表格的操作列按钮统一用 .table-actions 容器包裹，
+   强制一行显示、等间距对齐、不换行。
+*/
+.el-table .table-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.el-table .table-actions .el-button {
+  margin-left: 0;
+  flex-shrink: 0;
+}
+
+/* 操作列按钮由 .table-actions flex 容器控制对齐，
+   列内容的水平对齐由 el-table-column 的 align 属性决定（状态/标签/时间/操作列用 align="center"）。 */
 
 /* Tag */
 .el-tag {
@@ -293,9 +349,9 @@ a:hover { color: var(--text-link-hover); }
 }
 
 .el-menu-item.is-active {
-  background-color: rgba(100, 116, 139, 0.15);
-  color: var(--color-primary-300);
-  font-weight: var(--font-weight-medium);
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-weight: var(--font-medium);
 
   &::before {
     content: '';
@@ -303,9 +359,9 @@ a:hover { color: var(--text-link-hover); }
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 3px;
+    width: 2px;
     height: 60%;
-    background: var(--color-primary-400);
+    background: var(--color-primary-600);
     border-radius: 0 2px 2px 0;
   }
 }
@@ -340,6 +396,73 @@ a:hover { color: var(--text-link-hover); }
 
 .el-form-item {
   margin-bottom: var(--space-5);
+}
+
+/* === 表单对齐规范（修复"每行文字不在同一横线上"问题） ===
+   1. 统一所有表单输入控件宽度为 100%，保证同一行左右两列、
+      同一表单不同行的输入框右边缘对齐，文字终止位置在同一竖线。
+   2. 统一输入控件高度与内边距，保证不同类型控件
+      (input/select/date-picker/number) 的文字基线在同一水平线。
+   3. label 与 content 垂直居中，避免 label 文字与 input 文字错位。
+*/
+.el-form-item__content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: var(--leading-normal);
+}
+
+.el-form-item__content .el-input,
+.el-form-item__content .el-select,
+.el-form-item__content .el-date-editor.el-input,
+.el-form-item__content .el-date-editor.el-input__wrapper,
+.el-form-item__content .el-input-number,
+.el-form-item__content .el-cascader,
+.el-form-item__content .el-time-picker,
+.el-form-item__content .el-time-select,
+.el-form-item__content .el-autocomplete,
+.el-form-item__content .el-color-picker,
+.el-form-item__content .el-slider {
+  width: 100%;
+}
+
+/* 统一输入控件内边距与高度，消除 input/select/date-picker 的高度差，
+   保证同一行/同一表单不同行的文字基线在同一水平线。 */
+.el-form-item__content .el-input__wrapper,
+.el-form-item__content .el-date-editor.el-input__wrapper {
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.el-form-item__content .el-select .el-input__wrapper {
+  height: 36px;
+}
+
+/* Element Plus 新版 el-select 使用 .el-select__wrapper（非 el-input__wrapper） */
+.el-form-item__content .el-select__wrapper {
+  height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+}
+
+/* textarea 不强制高度，保留 min-height 保证多行输入 */
+.el-form-item__content .el-textarea__inner {
+  min-height: 36px;
+  box-sizing: border-box;
+}
+
+/* 单选/多选/开关行也垂直居中 */
+.el-form-item__content .el-radio-group,
+.el-form-item__content .el-checkbox-group,
+.el-form-item__content .el-switch {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 水平表单（label 在左）时，label 与 content 垂直居中对齐 */
+.el-form--inline .el-form-item__content,
+.el-form:not(.el-form--label-top) .el-form-item__content {
+  align-items: center;
 }
 
 /* Pagination */
@@ -541,17 +664,17 @@ a:hover { color: var(--text-link-hover); }
   margin-bottom: var(--space-8);  /* 48px */
 }
 .stat-card {
-  padding: var(--space-6);  /* 32px */
-  background: var(--surface-card);
+  padding: var(--space-6);
+  background: var(--surface-overlay);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  transition: all var(--transition-base);
+  box-shadow: none;
+  transition: border-color var(--transition-fast);
 }
 .stat-card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--border-hover);
-  transform: translateY(-4px);
+  box-shadow: none;
+  border-color: var(--color-primary-300);
+  transform: none;
 }
 .stat-card-inner {
   display: flex;

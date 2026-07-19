@@ -1,0 +1,28 @@
+{
+  "root": {
+    "kind": "project-shell",
+    "output": null,
+    "children": [
+      { "id": "page-a-login", "kind": "page-leaf", "output": "pages/a-login.html", "status": "planned" },
+      { "id": "page-a-dashboard", "kind": "page-leaf", "output": "pages/a-dashboard.html", "status": "planned" },
+      { "id": "page-a-logs", "kind": "page-leaf", "output": "pages/a-logs.html", "status": "planned" },
+      { "id": "page-a-log-detail", "kind": "page-leaf", "output": "pages/a-log-detail.html", "status": "planned" },
+      { "id": "page-a-log-form", "kind": "page-leaf", "output": "pages/a-log-form.html", "status": "planned" },
+      { "id": "page-b-login", "kind": "page-leaf", "output": "pages/b-login.html", "status": "planned" },
+      { "id": "page-b-dashboard", "kind": "page-leaf", "output": "pages/b-dashboard.html", "status": "planned" },
+      { "id": "page-b-logs", "kind": "page-leaf", "output": "pages/b-logs.html", "status": "planned" },
+      { "id": "page-b-log-detail", "kind": "page-leaf", "output": "pages/b-log-detail.html", "status": "planned" },
+      { "id": "page-b-log-form", "kind": "page-leaf", "output": "pages/b-log-form.html", "status": "planned" },
+      { "id": "page-c-login", "kind": "page-leaf", "output": "pages/c-login.html", "status": "planned" },
+      { "id": "page-c-dashboard", "kind": "page-leaf", "output": "pages/c-dashboard.html", "status": "planned" },
+      { "id": "page-c-logs", "kind": "page-leaf", "output": "pages/c-logs.html", "status": "planned" },
+      { "id": "page-c-log-detail", "kind": "page-leaf", "output": "pages/c-log-detail.html", "status": "planned" },
+      { "id": "page-c-log-form", "kind": "page-leaf", "output": "pages/c-log-form.html", "status": "planned" },
+      { "id": "page-d-login", "kind": "page-leaf", "output": "pages/d-login.html", "status": "planned" },
+      { "id": "page-d-dashboard", "kind": "page-leaf", "output": "pages/d-dashboard.html", "status": "planned" },
+      { "id": "page-d-logs", "kind": "page-leaf", "output": "pages/d-logs.html", "status": "planned" },
+      { "id": "page-d-log-detail", "kind": "page-leaf", "output": "pages/d-log-detail.html", "status": "planned" },
+      { "id": "page-d-log-form", "kind": "page-leaf", "output": "pages/d-log-form.html", "status": "planned" }
+    ]
+  }
+}

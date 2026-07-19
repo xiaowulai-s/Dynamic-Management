@@ -62,6 +62,36 @@ const router = createRouter({
           name: 'Notifications',
           component: () => import('@/views/Notifications.vue'),
           meta: { title: '通知中心', icon: 'Bell' }
+        },
+        {
+          path: 'customers',
+          name: 'Customers',
+          component: () => import('@/views/Customers.vue'),
+          meta: { title: '客户管理', icon: 'User', requireAdmin: true }
+        },
+        {
+          path: 'feedback',
+          name: 'Feedback',
+          component: () => import('@/views/Feedback.vue'),
+          meta: { title: '用户反馈', icon: 'ChatDotRound' }
+        },
+        {
+          path: 'audit',
+          name: 'AuditLog',
+          component: () => import('@/views/AuditLog.vue'),
+          meta: { title: '审计日志', icon: 'List', requireAdmin: true }
+        },
+        {
+          path: 'user-manage',
+          name: 'UserManage',
+          component: () => import('@/views/UserManage.vue'),
+          meta: { title: '用户管理', icon: 'UserFilled', requireAdmin: true }
+        },
+        {
+          path: 'equipment-logs/:id',
+          name: 'EquipmentLogs',
+          component: () => import('@/views/EquipmentLogs.vue'),
+          meta: { title: '设备日志' }
         }
       ]
     },
@@ -103,6 +133,12 @@ router.beforeEach(async (to, from, next) => {
     // 检查认证状态
     if (!userStore.isAuthenticated) {
       next('/login')
+      return
+    }
+
+    // 检查管理员权限
+    if (to.meta.requireAdmin && !userStore.isAdmin) {
+      next('/dashboard')
       return
     }
   }

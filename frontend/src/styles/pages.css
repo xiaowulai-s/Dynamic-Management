@@ -396,7 +396,9 @@
 /* ========== Sidebar Override ========== */
 .sidebar {
   background: var(--surface-sidebar) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border-default) !important;
 }
 
 .sidebar .el-menu {
@@ -405,7 +407,7 @@
 }
 
 .sidebar .el-menu-item {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--text-secondary) !important;
   border-radius: var(--radius-md) !important;
   margin: var(--space-1) var(--space-2) !important;
   height: 42px !important;
@@ -415,12 +417,12 @@
 
 .sidebar .el-menu-item:hover {
   background: var(--surface-sidebar-hover) !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: var(--navy-600) !important;
 }
 
 .sidebar .el-menu-item.is-active {
-  background: rgba(99, 102, 241, 0.15) !important;
-  color: var(--navy-300) !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+  color: var(--navy-500) !important;
 }
 
 .sidebar .el-menu-item .el-icon {

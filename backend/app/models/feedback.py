@@ -9,7 +9,7 @@ class Feedback(Base):
     __tablename__ = "feedbacks"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, comment="提交用户")
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True, comment="提交用户（删除用户时置空）")  # P16: 添加索引
     title = Column(String(200), nullable=False, comment="反馈标题")
     content = Column(Text, nullable=False, comment="反馈内容")
     reply = Column(Text, nullable=True, comment="管理员回复")

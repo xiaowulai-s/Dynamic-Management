@@ -1,14 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List, Optional
 from app.database import get_db
 from app.models.equipment import Equipment
 from app.models.user import User
-from app.utils.auth import get_current_user, require_role
+from app.utils.auth import get_current_user, require_admin
 from pydantic import BaseModel, Field
 from datetime import datetime, date
+from enum import Enum
 
 router = APIRouter()
+
+
+# Q20: 状态枚举校验
+class EquipmentStatus(str, Enum):
+    running = "running"
+    stopped = "stopped"
+    repairing = "repairing"
+    scrapped = "scrapped"
+
+
+class LifecycleStatus(str, Enum):
+    active = "active"
+    maintenance = "maintenance"
+    scrapped = "scrapped"
 
 
 # Pydantic模型
@@ -22,8 +38,9 @@ class EquipmentBase(BaseModel):
     purchase_date: Optional[date] = Field(None, description="购置日期")
     supplier: Optional[str] = Field(None, description="供应商")
     location: Optional[str] = Field(None, description="安装位置")
-    status: str = Field("running", description="状态：running/stopped/repairing/scrapped")
-    lifecycle_status: str = Field("active", description="生命周期状态：active/maintenance/scrapped")
+    customer_name: Optional[str] = Field(None, description="客户名称")
+    status: EquipmentStatus = Field(EquipmentStatus.running, description="状态")
+    lifecycle_status: LifecycleStatus = Field(LifecycleStatus.active, description="生命周期状态")
 
 
 class EquipmentCreate(EquipmentBase):
@@ -202,15 +219,13 @@ async def get_equipment(
         Log.status == "approved"
     ).order_by(MaintenanceRecord.maintenance_date.desc()).first()
 
-    # 总维修费用
+    # 总维修费用（P8: 使用 DB 聚合替代 Python sum）
     from app.models.logs import RepairLog
-    total_repair_cost = db.query(RepairLog).join(Log).filter(
+    total_cost = db.query(func.sum(RepairLog.cost)).join(Log).filter(
         Log.equipment_id == equipment_id,
         Log.status == "approved",
         RepairLog.cost.isnot(None)
-    ).all()
-
-    total_cost = sum(r.cost for r in total_repair_cost if r.cost)
+    ).scalar() or 0
 
     return EquipmentDetail(
         id=equipment.id,
@@ -248,7 +263,7 @@ async def update_equipment(
     - 只更新提供的字段
     """
     # 检查权限
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可修改设备信息"
@@ -291,16 +306,18 @@ async def update_equipment(
 @router.delete("/{equipment_id}", summary="删除设备")
 async def delete_equipment(
     equipment_id: int,
+    force: bool = Query(False, description="是否强制删除（级联删除关联日志）"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     删除设备
     - 仅管理员可删除
-    - 检查是否有关联日志
+    - 默认有关联日志时拒绝删除并返回日志数量
+    - force=true 时级联删除该设备的所有日志（含具体日志表）后删除设备
     """
     # 检查权限
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可删除设备"
@@ -315,15 +332,28 @@ async def delete_equipment(
         )
 
     # 检查是否有关联日志
-    from app.models.logs import Log
-    log_count = db.query(Log).filter(Log.equipment_id == equipment_id).count()
-    if log_count > 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"设备有 {log_count} 条关联日志，无法删除"
-        )
+    from app.models.logs import (
+        Log, InstallationLog, RepairLog, ScrapLog,
+        InspectionLog, MaintenanceRecord, FaultReport,
+        PartsReplacementLog, CalibrationLog
+    )
+    related_logs = db.query(Log).filter(Log.equipment_id == equipment_id).all()
+
+    if related_logs:
+        if not force:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"设备有 {len(related_logs)} 条关联日志，无法直接删除。如需强制删除，将一并清除这些日志。"
+            )
+        # force=true：先删除具体日志表（ORM cascade 不会处理这些），Log 基础表由 Equipment.logs 的 cascade 自动删除
+        log_ids = [log.id for log in related_logs]
+        for detail_model in (InstallationLog, RepairLog, ScrapLog, InspectionLog,
+                             MaintenanceRecord, FaultReport, PartsReplacementLog, CalibrationLog):
+            db.query(detail_model).filter(detail_model.id.in_(log_ids)).delete(synchronize_session=False)
+        db.query(Log).filter(Log.id.in_(log_ids)).delete(synchronize_session=False)
+        db.flush()
 
     db.delete(equipment)
     db.commit()
 
-    return {"message": "设备删除成功"}
+    return {"message": "设备删除成功" + ("（已级联删除关联日志）" if related_logs else "")}

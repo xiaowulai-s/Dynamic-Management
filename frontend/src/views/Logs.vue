@@ -1,142 +1,243 @@
 <template>
   <div class="logs-page">
-    <div class="page-header">
-      <h2>日志管理</h2>
-      <div class="header-actions">
-        <el-button type="primary" @click="handleBatchUpload">
+    <!-- 1. 页头 -->
+    <header class="page-head">
+      <div class="head-left">
+        <h1 class="page-title">日志管理</h1>
+        <p class="page-subtitle">
+          共 <span class="numeric">{{ pagination.total }}</span> 条日志记录 · 已筛选 <span class="numeric">{{ logList.length }}</span> 条
+        </p>
+      </div>
+      <div class="head-right">
+        <div class="view-segmented" role="group" aria-label="视图切换">
+          <button type="button" class="seg-btn is-active">
+            <el-icon><List /></el-icon>
+            <span>列表</span>
+          </button>
+          <button type="button" class="seg-btn">
+            <el-icon><Grid /></el-icon>
+            <span>卡片</span>
+          </button>
+        </div>
+        <el-button class="btn-outline" @click="handleBatchUpload">
           <el-icon><Upload /></el-icon>
-          批量上传识别
+          <span>批量上传识别</span>
         </el-button>
-        <el-button type="success" @click="handleAdd">
+        <el-button type="primary" @click="handleAdd">
           <el-icon><Plus /></el-icon>
-          提交日志
+          <span>提交日志</span>
         </el-button>
       </div>
-    </div>
+    </header>
 
-    <!-- 搜索栏 -->
-    <el-card class="search-card">
-      <el-form :model="searchForm" inline>
-        <el-form-item label="日志类型">
-          <el-select v-model="searchForm.log_type" placeholder="全部" clearable>
-            <el-option label="设备安装" value="installation" />
-            <el-option label="设备维修" value="repair" />
-            <el-option label="设备报废" value="scrap" />
-            <el-option label="日常巡检" value="inspection" />
-            <el-option label="保养记录" value="maintenance" />
-            <el-option label="故障报修" value="fault" />
-            <el-option label="配件更换" value="parts" />
-            <el-option label="校准记录" value="calibration" />
-          </el-select>
-        </el-form-item>
+    <!-- 2. 统计概览条 -->
+    <section class="stat-bar card-minimal">
+      <div class="stat-item">
+        <div class="stat-label">
+          <el-icon><Calendar /></el-icon>
+          <span>今日新增</span>
+        </div>
+        <div class="stat-value">
+          <span class="numeric">12</span>
+          <span class="trend trend-up">
+            <el-icon><TrendingUp /></el-icon>
+            +3
+          </span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">
+          <el-icon><Clock /></el-icon>
+          <span>待审核</span>
+        </div>
+        <div class="stat-value">
+          <span class="numeric">{{ logList.filter(l => l.status === 'pending').length }}</span>
+          <span class="trend trend-neutral">条</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">
+          <el-icon><Warning /></el-icon>
+          <span>本周故障</span>
+        </div>
+        <div class="stat-value">
+          <span class="numeric">3</span>
+          <span class="trend trend-down">
+            <el-icon><Bottom /></el-icon>
+            -1
+          </span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">
+          <el-icon><CircleCheck /></el-icon>
+          <span>已通过</span>
+        </div>
+        <div class="stat-value">
+          <span class="numeric">{{ logList.filter(l => l.status === 'approved').length }}</span>
+          <span class="trend trend-neutral">条</span>
+        </div>
+      </div>
+    </section>
 
-        <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="全部" clearable>
-            <el-option label="待审批" value="pending" />
-            <el-option label="已通过" value="approved" />
-            <el-option label="已驳回" value="rejected" />
-          </el-select>
-        </el-form-item>
+    <!-- 3. 筛选区 -->
+    <section class="filter-card card-minimal">
+      <el-form :model="searchForm" class="filter-form">
+        <div class="filter-grid">
+          <div class="filter-field">
+            <label class="field-label">日志类型</label>
+            <el-select v-model="searchForm.log_type" placeholder="全部类型" clearable>
+              <el-option label="设备安装" value="installation" />
+              <el-option label="设备维修" value="repair" />
+              <el-option label="设备报废" value="scrap" />
+              <el-option label="日常巡检" value="inspection" />
+              <el-option label="保养记录" value="maintenance" />
+              <el-option label="故障报修" value="fault" />
+              <el-option label="配件更换" value="parts" />
+              <el-option label="校准记录" value="calibration" />
+            </el-select>
+          </div>
 
-        <el-form-item label="设备">
-          <el-select
-            v-model="searchForm.equipment_id"
-            placeholder="全部设备"
-            clearable
-            filterable
-            style="width: 200px"
-          >
-            <el-option
-              v-for="eq in equipmentList"
-              :key="eq.id"
-              :label="`${eq.code} - ${eq.name}`"
-              :value="eq.id"
+          <div class="filter-field">
+            <label class="field-label">状态</label>
+            <el-select v-model="searchForm.status" placeholder="全部状态" clearable>
+              <el-option label="待审批" value="pending" />
+              <el-option label="已通过" value="approved" />
+              <el-option label="已驳回" value="rejected" />
+            </el-select>
+          </div>
+
+          <div class="filter-field filter-field-eq">
+            <label class="field-label">设备</label>
+            <el-select
+              v-model="searchForm.equipment_id"
+              placeholder="全部设备"
+              clearable
+              filterable
+            >
+              <el-option
+                v-for="eq in equipmentList"
+                :key="eq.id"
+                :label="`${eq.code} - ${eq.name}`"
+                :value="eq.id"
+              />
+            </el-select>
+          </div>
+
+          <div class="filter-field filter-field-grow">
+            <label class="field-label">关键词</label>
+            <el-input
+              v-model="searchForm.keyword"
+              placeholder="搜索描述..."
+              clearable
+              :prefix-icon="Search"
+              @keyup.enter="handleSearch"
             />
-          </el-select>
-        </el-form-item>
+          </div>
 
-        <el-form-item label="关键词">
-          <el-input
-            v-model="searchForm.keyword"
-            placeholder="搜索描述..."
-            clearable
-            style="width: 200px"
-            @keyup.enter="handleSearch"
-          />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-form-item>
+          <div class="filter-actions">
+            <el-button type="primary" @click="handleSearch">
+              <el-icon><Search /></el-icon>
+              <span>查询</span>
+            </el-button>
+            <el-button text @click="handleReset">
+              <el-icon><Close /></el-icon>
+              <span>清除筛选</span>
+            </el-button>
+          </div>
+        </div>
       </el-form>
-    </el-card>
+    </section>
 
-    <!-- 日志列表 -->
-    <el-card class="table-card">
+    <!-- 4. 表格 -->
+    <section class="table-card card-minimal">
       <el-table
         :data="logList"
         v-loading="loading"
-        class="form-full"
+        class="logs-table"
       >
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="created_at" label="提交时间" width="180">
+        <el-table-column prop="id" label="ID" width="90">
           <template #default="{ row }">
-            {{ formatDate(row.created_at) }}
+            <span class="cell-id numeric">#{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="equipment_name" label="设备名称" min-width="150" />
+        <el-table-column prop="created_at" label="提交时间" width="180" align="center">
+          <template #default="{ row }">
+            <span class="cell-date">{{ formatDate(row.created_at) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="equipment_name" label="设备名称" min-width="160" />
         <el-table-column prop="log_type" label="日志类型" width="120">
           <template #default="{ row }">
-            <el-tag :type="getLogTypeColor(row.log_type)">
-              {{ getLogTypeLabel(row.log_type) }}
-            </el-tag>
+            <span class="badge" :class="'badge-' + row.log_type">{{ getLogTypeLabel(row.log_type) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="operator_name" label="提交人" width="120" />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="110" align="center">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)">
+            <span
+              class="badge"
+              :class="'badge-' + (row.status === 'pending' ? 'warning' : row.status === 'approved' ? 'success' : 'error')"
+            >
+              <span class="badge-dot"></span>
               {{ getStatusLabel(row.status) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
-        <el-table-column prop="description" label="描述" min-width="150" show-overflow-tooltip />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="description" label="描述" min-width="180" show-overflow-tooltip />
+        <el-table-column label="操作" min-width="220" fixed="right" align="center">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleView(row)">
-              查看
-            </el-button>
-            <el-button
-              v-if="row.status === 'pending' && (userStore.isAdmin || row.operator_name === userStore.username)"
-              type="warning"
-              size="small"
-              @click="handleEdit(row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              v-if="row.status === 'pending' && userStore.isAdmin"
-              type="success"
-              size="small"
-              @click="handleApprove(row)"
-            >
-              审批
-            </el-button>
-            <el-button
-              v-if="row.status === 'pending' && (userStore.isAdmin || row.operator_name === userStore.username)"
-              type="danger"
-              size="small"
-              @click="handleDelete(row)"
-            >
-              删除
-            </el-button>
+            <div class="table-actions">
+              <el-button text size="small" @click="handleView(row)">
+                <el-icon><View /></el-icon>
+                <span>查看</span>
+              </el-button>
+              <el-button
+                v-if="userStore.isAdmin || row.operator_id === userStore.userInfo?.id"
+                text
+                size="small"
+                @click="handleEdit(row)"
+              >
+                <el-icon><Edit /></el-icon>
+                <span>编辑</span>
+              </el-button>
+              <el-button
+                v-if="userStore.isAdmin && row.status === 'pending'"
+                text
+                size="small"
+                @click="handleApprove(row)"
+              >
+                <el-icon><Check /></el-icon>
+                <span>审批</span>
+              </el-button>
+              <el-button
+                v-if="userStore.isAdmin"
+                text
+                size="small"
+                class="btn-danger-text"
+                @click="handleDelete(row)"
+              >
+                <el-icon><Delete /></el-icon>
+                <span>删除</span>
+              </el-button>
+            </div>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <el-icon><Document /></el-icon>
+            </div>
+            <p class="empty-title">暂无日志记录</p>
+            <p class="empty-sub">还没有任何设备日志，点击下方按钮提交第一条记录</p>
+            <el-button type="primary" @click="handleAdd">
+              <el-icon><Plus /></el-icon>
+              <span>新建日志</span>
+            </el-button>
+          </div>
+        </template>
       </el-table>
-      <template #empty>
-        <el-empty description="暂无日志数据" />
-      </template>
 
       <!-- 分页 -->
       <div class="pagination">
@@ -150,7 +251,7 @@
           @current-change="fetchLogs"
         />
       </div>
-    </el-card>
+    </section>
 
     <!-- 新增/编辑日志对话框 -->
     <el-dialog
@@ -159,6 +260,7 @@
       width="900px"
       @close="handleFormDialogClose"
       destroy-on-close
+      class="form-dialog"
     >
       <el-form
         ref="logFormRef"
@@ -531,7 +633,7 @@
     </el-dialog>
 
     <!-- 审批对话框 -->
-    <el-dialog v-model="approveDialogVisible" title="审批日志" width="500px">
+    <el-dialog v-model="approveDialogVisible" title="审批日志" width="500px" class="approve-dialog">
       <el-form label-width="100px">
         <el-form-item label="审批结果">
           <el-radio-group v-model="approveAction">
@@ -558,7 +660,7 @@
     </el-dialog>
 
     <!-- 日志详情对话框 -->
-    <el-dialog v-model="detailDialogVisible" title="日志详情" width="900px">
+    <el-dialog v-model="detailDialogVisible" title="日志详情" width="900px" class="detail-dialog">
       <div v-if="currentLog">
         <el-descriptions :column="2" border>
           <el-descriptions-item label="日志类型">
@@ -635,7 +737,21 @@ import type { FormInstance } from 'element-plus'
 import {
   Plus,
   Upload,
-  Document
+  Document,
+  Search,
+  Close,
+  View,
+  Edit,
+  Delete,
+  Check,
+  List,
+  Grid,
+  Calendar,
+  Clock,
+  Top,
+  Bottom,
+  Warning,
+  CircleCheck
 } from '@element-plus/icons-vue'
 import {
   getLogs,
@@ -654,8 +770,8 @@ const route = useRoute()
 const userStore = useUserStore()
 
 const loading = ref(false)
-const logList = ref([])
-const equipmentList = ref([])
+const logList = ref<any[]>([])
+const equipmentList = ref<any[]>([])
 
 const searchForm = reactive({
   log_type: '',
@@ -817,7 +933,7 @@ const logForm = reactive({
   repair_date: '',
   fault_description: '',
   solution: '',
-  repair_cost: 0,
+  cost: 0,
   repair_time: 0,
   scrap_date: '',
   scrap_reason: '',
@@ -836,7 +952,6 @@ const logForm = reactive({
   parts_name: '',
   parts_code: '',
   quantity: 1,
-  parts_cost: 0,
   calibration_date: '',
   calibration_org: '',
   calibration_result: 'qualified',
@@ -1119,7 +1234,7 @@ const handleUploadSuccess = (response: any, file: any) => {
 }
 
 const handleUploadRemove = (file: any) => {
-  console.log('文件已删除', file)
+  // 文件已删除
 }
 
 const getDetailLabel = (key: string) => {
@@ -1200,118 +1315,633 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ============================================================
+   Logs.vue · 方案A 现代简约风
+   ============================================================ */
+
 .logs-page {
-  /* padding 由 .content 全局控制 */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.page-header {
+/* ===== 通用卡片（细线分隔，无投影） ===== */
+.card-minimal {
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+
+/* ===== 数字 ===== */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== 区块标题竖条（同 Dashboard） ===== */
+.section-title {
+  position: relative;
+  padding-left: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-primary);
+}
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 14px;
+  background: var(--color-primary-600);
+  border-radius: 2px;
+}
+
+/* ===== 1. 页头 ===== */
+.page-head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);  /* 32px */
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
 }
 
-.page-header h2 {
-  margin: 0;
-}
-
-.header-actions {
+.head-left {
   display: flex;
-  gap: var(--space-4);  /* 16px */
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
-.search-card {
-  margin-bottom: var(--space-6);  /* 32px */
+.page-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 
-/* 搜索卡片优化 */
-.search-card :deep(.el-card__body) {
-  padding: var(--space-6);
+.page-subtitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
 }
 
-.search-card :deep(.el-form-item) {
-  margin-bottom: 0;
+.page-subtitle .numeric {
+  color: var(--text-secondary);
+  font-weight: var(--font-w-medium);
 }
 
-.table-card {
-  margin-bottom: var(--space-6);  /* 32px */
+.head-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* 视图切换 segmented */
+.view-segmented {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  gap: 2px;
+}
+
+.seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-w-medium);
+  font-family: var(--font-sans);
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.seg-btn:hover {
+  color: var(--text-secondary);
+}
+
+.seg-btn.is-active {
+  background: var(--surface-overlay);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.seg-btn .el-icon {
+  font-size: 14px;
+}
+
+/* 描边按钮（批量上传） */
+.btn-outline {
+  border: 1px solid var(--border-default);
+  background: var(--surface-overlay);
+  color: var(--text-secondary);
+  font-weight: var(--font-w-medium);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-primary-400);
+  color: var(--color-primary-600);
+  background: var(--surface-overlay);
+}
+
+/* ===== 2. 统计概览条 ===== */
+.stat-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   overflow: hidden;
 }
 
-/* 表格优化 */
-.table-card :deep(.el-table) {
-  border-radius: var(--radius-md);
+.stat-item {
+  padding: var(--space-4) var(--space-5);
+  border-right: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
 }
 
-.table-card :deep(.el-table__cell) {
+.stat-item:last-child {
+  border-right: none;
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-weight: var(--font-w-medium);
+}
+
+.stat-label .el-icon {
+  font-size: 14px;
+}
+
+.stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.stat-value .numeric {
+  font-size: var(--text-lg);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-w-medium);
+  font-family: var(--font-mono);
+}
+
+.trend .el-icon {
+  font-size: 12px;
+}
+
+.trend-up {
+  color: var(--color-success-600);
+}
+
+.trend-down {
+  color: var(--color-danger-600);
+}
+
+.trend-neutral {
+  color: var(--text-tertiary);
+}
+
+/* ===== 3. 筛选区 ===== */
+.filter-card {
   padding: var(--space-4) var(--space-5);
 }
 
-/* 分页 */
-.pagination {
-  margin-top: var(--space-6);  /* 32px */
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 var(--space-4);
+.filter-form {
+  width: 100%;
 }
 
+.filter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3) var(--space-4);
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 180px;
+  min-width: 0;
+}
+
+.filter-field-eq {
+  width: 220px;
+}
+
+.filter-field-grow {
+  flex: 1 1 220px;
+  width: auto;
+  min-width: 200px;
+}
+
+.field-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-weight: var(--font-w-medium);
+  line-height: 1.4;
+}
+
+.filter-card :deep(.el-select),
+.filter-card :deep(.el-input) {
+  width: 100%;
+}
+
+.filter-card :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ===== 4. 表格 ===== */
+.table-card {
+  overflow: hidden;
+}
+
+.logs-table {
+  width: 100%;
+  --el-table-header-bg-color: var(--color-neutral-50);
+  --el-table-row-hover-bg-color: var(--color-neutral-100);
+  --el-table-border-color: var(--border-default);
+  --el-table-border: 1px solid var(--border-default);
+}
+
+.table-card :deep(.el-table) {
+  border-radius: var(--radius-md);
+  border: none;
+}
+
+.table-card :deep(.el-table th.el-table__cell) {
+  background: var(--color-neutral-50);
+  color: var(--text-tertiary);
+  font-weight: var(--font-w-medium);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.table-card :deep(.el-table .el-table__cell) {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.table-card :deep(.el-table .el-table__row:hover > td.el-table__cell) {
+  background: var(--color-neutral-100) !important;
+}
+
+.table-card :deep(.el-table__body tr.current-row > td.el-table__cell) {
+  background: var(--color-primary-50) !important;
+  box-shadow: inset 2px 0 0 0 var(--color-primary-600);
+}
+
+.table-card :deep(.el-table__inner-wrapper::before),
+.table-card :deep(.el-table::before) {
+  display: none;
+}
+
+.table-card :deep(.el-table--border .el-table__inner-wrapper::after),
+.table-card :deep(.el-table__border-left-patch) {
+  display: none;
+}
+
+.cell-id {
+  color: var(--text-secondary);
+  font-weight: var(--font-w-medium);
+  font-size: var(--text-xs);
+}
+
+.cell-date {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+/* 行操作按钮 */
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.row-actions :deep(.el-button) {
+  padding: 4px 6px;
+  height: auto;
+}
+
+.row-actions :deep(.el-button .el-icon + span) {
+  margin-left: 2px;
+  font-size: var(--text-xs);
+}
+
+.btn-danger-text {
+  color: var(--color-danger-600) !important;
+}
+
+.btn-danger-text:hover {
+  color: var(--color-danger-700) !important;
+  background: var(--color-danger-50) !important;
+}
+
+/* ===== Badge 系统 ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* 8 类日志类型专属配色 */
+.badge-installation {
+  background: color-mix(in srgb, var(--color-primary-600) 12%, transparent);
+  color: var(--color-primary-600);
+}
+
+.badge-repair {
+  background: color-mix(in srgb, var(--color-warning-500) 14%, transparent);
+  color: var(--color-warning-600);
+}
+
+.badge-scrap {
+  background: var(--color-neutral-100);
+  color: var(--text-tertiary);
+}
+
+.badge-inspection {
+  background: color-mix(in srgb, #0891B2 12%, transparent);
+  color: #0891B2;
+}
+
+.badge-maintenance {
+  background: color-mix(in srgb, var(--color-success-500) 12%, transparent);
+  color: var(--color-success-600);
+}
+
+.badge-fault {
+  background: color-mix(in srgb, var(--color-danger-500) 12%, transparent);
+  color: var(--color-danger-600);
+}
+
+.badge-parts {
+  background: color-mix(in srgb, #7C3AED 12%, transparent);
+  color: #7C3AED;
+}
+
+.badge-calibration {
+  background: color-mix(in srgb, #CA8A04 14%, transparent);
+  color: #CA8A04;
+}
+
+/* 状态 badge */
+.badge-warning {
+  background: color-mix(in srgb, var(--color-warning-500) 14%, transparent);
+  color: var(--color-warning-600);
+}
+
+.badge-success {
+  background: color-mix(in srgb, var(--color-success-500) 12%, transparent);
+  color: var(--color-success-600);
+}
+
+.badge-error {
+  background: color-mix(in srgb, var(--color-danger-500) 12%, transparent);
+  color: var(--color-danger-600);
+}
+
+.badge-neutral {
+  background: var(--color-neutral-100);
+  color: var(--text-tertiary);
+}
+
+/* ===== 空状态 ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  gap: var(--space-2);
+}
+
+.empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-neutral-100);
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
+
+.empty-icon .el-icon {
+  font-size: 24px;
+}
+
+.empty-title {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-primary);
+}
+
+.empty-sub {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* ===== 分页 ===== */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-default);
+}
+
+/* ===== 对话框 ===== */
+.form-dialog :deep(.el-dialog),
+.approve-dialog :deep(.el-dialog),
+.detail-dialog :deep(.el-dialog) {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-2xl);
+}
+
+.form-dialog :deep(.el-dialog__header),
+.approve-dialog :deep(.el-dialog__header),
+.detail-dialog :deep(.el-dialog__header) {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-default);
+  margin-bottom: 0;
+}
+
+.form-dialog :deep(.el-dialog__title),
+.approve-dialog :deep(.el-dialog__title),
+.detail-dialog :deep(.el-dialog__title) {
+  font-size: var(--text-md);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-primary);
+}
+
+.form-dialog :deep(.el-dialog__body),
+.approve-dialog :deep(.el-dialog__body),
+.detail-dialog :deep(.el-dialog__body) {
+  padding: var(--space-5);
+}
+
+.form-dialog :deep(.el-dialog__footer),
+.approve-dialog :deep(.el-dialog__footer),
+.detail-dialog :deep(.el-dialog__footer) {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border-default);
+}
+
+/* 详情对话框描述列表 */
+.detail-dialog :deep(.el-descriptions) {
+  margin-top: 0;
+}
+
+.detail-dialog :deep(.el-descriptions__label) {
+  font-weight: var(--font-w-medium);
+  color: var(--text-tertiary);
+  background: var(--color-neutral-50);
+  width: 120px;
+}
+
+.detail-dialog :deep(.el-descriptions__content) {
+  color: var(--text-primary);
+}
+
+.detail-dialog :deep(.el-divider) {
+  margin: var(--space-5) 0;
+}
+
+.detail-dialog h4 {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-primary);
+}
+
+/* 表单对话框分割线 */
+.form-dialog :deep(.el-divider--horizontal) {
+  margin: var(--space-4) 0;
+}
+
+.form-dialog :deep(.el-divider__text) {
+  font-size: var(--text-xs);
+  font-weight: var(--font-w-semibold);
+  color: var(--text-secondary);
+  background: var(--surface-overlay);
+}
+
+/* ===== 附件 / 表单全宽 ===== */
 .attachments {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .form-full {
   width: 100%;
 }
 
-/* 日志类型标签颜色优化 */
-.log-type-tag {
-  font-weight: 500;
-}
-
-/* 详情对话框 */
-.detail-dialog :deep(.el-descriptions) {
-  margin-top: var(--space-4);
-}
-
-.detail-dialog :deep(.el-descriptions__label) {
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-}
-
-.detail-dialog :deep(.el-divider) {
-  margin: var(--space-6) 0;
-}
-
-/* 表单对话框 */
-.form-dialog :deep(.el-dialog) {
-  border-radius: var(--radius-lg);
-}
-
-.form-dialog :deep(.el-dialog__header) {
-  padding: var(--space-6);
-}
-
-.form-dialog :deep(.el-dialog__body) {
-  padding: var(--space-6);
-}
-
-/* 响应式优化 */
+/* ===== 响应式 ===== */
 @media (max-width: 768px) {
-  .header-actions {
+  .page-head {
     flex-direction: column;
-    gap: var(--space-3);
+    align-items: stretch;
   }
 
-  .search-card :deep(.el-form) {
+  .head-right {
+    justify-content: flex-start;
+  }
+
+  .stat-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .stat-item:nth-child(1),
+  .stat-item:nth-child(2) {
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .filter-grid {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-field,
+  .filter-field-eq,
+  .filter-field-grow {
+    width: 100%;
+  }
+
+  .filter-actions {
+    justify-content: flex-start;
   }
 
   .table-card :deep(.el-table) {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
   }
 
-  .table-card :deep(.el-table__cell) {
-    padding: var(--space-3) var(--space-4);
+  .table-card :deep(.el-table .el-table__cell) {
+    padding: 8px;
+  }
+
+  .pagination {
+    justify-content: center;
   }
 }
 </style>

@@ -1,0 +1,135 @@
+/* ============================================================
+   方案 C · 复古怀旧风 (Retro Nostalgic) — Element Plus 主题 Tokens
+   适用：Vue3 + Element Plus 工程，在根元素或 :root 引入即可覆盖默认主题。
+   落地方式：import './element-plus-tokens-retro.css' 置于 App 入口之后。
+   设计理念：暖纸背景 + 咖啡主色 + 衬线标题；文档式档案排版、印章工单感。
+   ============================================================ */
+
+:root {
+  /* —— 品牌主色：咖啡棕 —— */
+  --el-color-primary: #6F4E37;
+  --el-color-primary-light-3: #94715A;
+  --el-color-primary-light-5: #B08D6E;
+  --el-color-primary-light-7: #C9A98C;
+  --el-color-primary-light-8: #D6BB9F;
+  --el-color-primary-light-9: #EFE4CF;
+  --el-color-primary-dark-2: #4A3322;
+
+  /* —— 状态色：泥土色系（复古调）—— */
+  --el-color-success: #4B6B3B;
+  --el-color-success-light-3: #6E8A5F;
+  --el-color-success-light-5: #90A584;
+  --el-color-success-light-7: #B1C0A9;
+  --el-color-success-light-8: #C2CEBC;
+  --el-color-success-light-9: #E3E8DF;
+
+  --el-color-warning: #B7410E;
+  --el-color-warning-light-3: #C96B42;
+  --el-color-warning-light-5: #D48E6E;
+  --el-color-warning-light-7: #DEB096;
+  --el-color-warning-light-8: #E4C0AC;
+  --el-color-warning-light-9: #F2E3D6;
+
+  --el-color-danger: #8B2C1B;
+  --el-color-danger-light-3: #A55A4C;
+  --el-color-danger-light-5: #B97868;
+  --el-color-danger-light-7: #CD968A;
+  --el-color-danger-light-8: #D6A89E;
+  --el-color-danger-light-9: #EBD9D3;
+
+  --el-color-error: #8B2C1B;
+  --el-color-info: #6F4E37;
+
+  /* —— 背景：暖纸 —— */
+  --el-bg-color: #FBF6EC;
+  --el-bg-color-page: #F5EFE6;
+  --el-bg-color-overlay: #FBF6EC;
+
+  /* —— 文本：墨色 —— */
+  --el-text-color-primary: #3D2C1E;
+  --el-text-color-regular: #5C4633;
+  --el-text-color-secondary: #8A6F52;
+  --el-text-color-placeholder: #B08D6E;
+  --el-text-color-disabled: #D9C9B0;
+
+  /* —— 边框：暖棕实线 —— */
+  --el-border-color: #D9C9B0;
+  --el-border-color-light: #EDE3D2;
+  --el-border-color-lighter: #F5EFE6;
+  --el-border-color-extra-light: #FBF6EC;
+  --el-border-color-dark: #B08D6E;
+  --el-border-color-darker: #8A6F52;
+
+  /* —— 填充 —— */
+  --el-fill-color: #EDE3D2;
+  --el-fill-color-light: #F5EFE6;
+  --el-fill-color-lighter: #FBF6EC;
+  --el-fill-color-blank: #FBF6EC;
+  --el-fill-color-dark: #D9C9B0;
+
+  /* —— 圆角：方正，档案卡片感 —— */
+  --el-border-radius-base: 2px;
+  --el-border-radius-small: 0px;
+  --el-border-radius-round: 4px;
+  --el-border-radius-circle: 100%;
+
+  /* —— 阴影：纸面无投影，浮层用柔棕阴影 —— */
+  --el-box-shadow: 0 6px 18px rgba(74, 51, 34, 0.18);
+  --el-box-shadow-light: 0 4px 12px rgba(74, 51, 34, 0.12);
+  --el-box-shadow-lighter: 0 2px 6px rgba(74, 51, 34, 0.08);
+  --el-box-shadow-dark: 0 10px 28px rgba(74, 51, 34, 0.24);
+
+  /* —— 字体：衬线标题 + 无衬线正文 —— */
+  --el-font-family: 'Noto Sans SC', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --el-font-size-extra-large: 20px;
+  --el-font-size-large: 18px;
+  --el-font-size-medium: 16px;
+  --el-font-size-base: 14px;
+  --el-font-size-small: 13px;
+  --el-font-size-extra-small: 12px;
+
+  /* —— 禁用态 —— */
+  --el-disabled-bg-color: #F5EFE6;
+  --el-disabled-text-color: #D9C9B0;
+  --el-disabled-border-color: #EDE3D2;
+
+  /* —— 分隔线 —— */
+  --el-border-color-split: #D9C9B0;
+}
+
+/* 卡片：纸面实线边框 + 顶部柔棕渐变（与方案 C 的 .card-retro 一致） */
+.el-card {
+  border-radius: 2px;
+  border: 1px solid #D9C9B0;
+  box-shadow: none !important;
+  background: #FBF6EC;
+  background-image: linear-gradient(180deg, rgba(176, 141, 110, 0.04), transparent 120px);
+}
+
+/* 标题：衬线（档案册感） */
+.el-card__header,
+.el-dialog__title,
+.font-display {
+  font-family: 'Noto Serif SC', 'Source Han Serif SC', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+}
+
+/* 数字类：等宽（工单编号） */
+.el-statistic__number,
+.numeric {
+  font-family: 'Courier New', 'SFMono-Regular', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 印章/工单标签（用于状态标记） */
+.stamp {
+  border: 2px solid #8B2C1B;
+  color: #8B2C1B;
+  font-family: 'Noto Serif SC', Georgia, serif;
+  letter-spacing: 0.1em;
+  transform: rotate(-6deg);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  opacity: 0.85;
+}

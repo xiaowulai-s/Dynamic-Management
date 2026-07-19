@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页 · 清新自然</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 D · 清新自然风 (Fresh Natural)
+   设计理念：柔白背景 + 森林绿主色；圆润柔和、友好亲和；
+   大圆角、柔和阴影、有机形态，像消费级健康/环保产品后台。
+   适合：面向一线工程师、强调易用与温度的设备管家。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+:root {
+  /* —— 品牌主色：森林绿（单一色相）—— */
+  --primary-50:  #F0FDF4;
+  --primary-100: #DCFCE7;
+  --primary-300: #86EFAC;
+  --primary-500: #2F855A;
+  --primary-600: #276749;
+  --primary-700: #22543D;
+
+  /* —— 暖中性阶 —— */
+  --sage-50:  #FDFCF8;
+  --sage-100: #F6F7F3;
+  --sage-200: #EAF0EA;
+  --sage-300: #D7E2D8;
+  --sage-400: #A8BCAB;
+  --sage-500: #5C7268;
+  --sage-700: #38503F;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #FDFCF8;
+  --foreground: #1F2A24;
+  --card: #FFFFFF;
+  --card-foreground: #1F2A24;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2A24;
+  --primary: #2F855A;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EAF0EA;
+  --secondary-foreground: #38503F;
+  --muted: #F6F7F3;
+  --muted-foreground: #5C7268;
+  --accent: #E3F6E9;
+  --accent-foreground: #276749;
+  --destructive: #C53030;
+  --destructive-foreground: #FFFFFF;
+  --border: #E3EAE4;
+  --input: #E3EAE4;
+  --ring: #2F855A;
+
+  /* —— 圆角：柔和偏大（不超 16px）—— */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* —— 状态色：自然色调 —— */
+  --state-success: #2F855A;
+  --state-warning: #D69E2E;
+  --state-error:   #C53030;
+  --state-info:    #319795;
+
+  /* —— 图表色：自然色系 —— */
+  --chart-1: #2F855A;
+  --chart-2: #38B2AC;
+  --chart-3: #D69E2E;
+  --chart-4: #68A063;
+  --chart-5: #8B9D83;
+
+  /* —— 字体：圆润无衬线 —— */
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', system-ui, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 阴影：柔和投影，体现亲和 —— */
+  --shadow-card: 0 1px 2px rgba(31, 42, 36, 0.04), 0 2px 8px rgba(31, 42, 36, 0.04);
+  --shadow-popover: 0 8px 24px rgba(31, 42, 36, 0.10);
+  --shadow-drawer: -8px 0 32px rgba(31, 42, 36, 0.10);
+
+  /* —— 间距与密度：中等，宽松舒适 —— */
+  --space-page: 24px;
+  --space-card: 20px;
+  --density: 3;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 自然风：柔和圆角卡片 */
+.card-natural {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* 叶片状柔和高亮 */
+.pill-soft {
+  border-radius: 999px;
+  padding: 4px 12px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden">
+      <!-- 装饰叶片背景 -->
+      <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-40 pointer-events-none" style="background: radial-gradient(circle, var(--primary-100) 0%, transparent 70%);"></div>
+      <div class="absolute -bottom-32 -right-24 w-[28rem] h-[28rem] rounded-full opacity-30 pointer-events-none" style="background: radial-gradient(circle, var(--accent) 0%, transparent 70%);"></div>
+
+      <div class="w-full max-w-5xl relative">
+        <div class="card-natural overflow-hidden grid grid-cols-1 md:grid-cols-2">
+          <!-- 左侧品牌区 -->
+          <div class="relative p-10 flex flex-col justify-between min-h-[560px]" style="background: linear-gradient(160deg, var(--primary-50) 0%, var(--accent) 100%);">
+            <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-25" style="background: var(--primary-300);"></div>
+            <div class="absolute bottom-10 -left-10 w-28 h-28 rounded-full opacity-15" style="background: var(--primary-300);"></div>
+
+            <div class="relative">
+              <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-card);">
+                  <i data-lucide="leaf" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <div class="text-base font-bold leading-tight" style="color: var(--primary-700);">设备信息动态管理系统</div>
+                  <div class="text-xs mt-0.5" style="color: var(--sage-500);">Equipment Log Manager</div>
+                </div>
+              </div>
+
+              <h1 class="text-3xl font-bold leading-snug mb-3" style="color: var(--primary-700);">
+                设备全生命周期<br>日志管理
+              </h1>
+              <p class="text-sm leading-relaxed" style="color: var(--sage-500);">亲和易用，温暖一线工程师的设备管家</p>
+            </div>
+
+            <div class="relative mt-10 space-y-3">
+              <div class="flex items-center gap-3 p-3.5 rounded-2xl" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(4px);">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--primary-100); color: var(--primary);">
+                  <i data-lucide="leaf" class="w-4 h-4"></i>
+                </div>
+                <div class="text-sm font-medium" style="color: var(--foreground);">8 类日志全流程覆盖</div>
+              </div>
+              <div class="flex items-center gap-3 p-3.5 rounded-2xl" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(4px);">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--primary-100); color: var(--primary);">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </div>
+                <div class="text-sm font-medium" style="color: var(--foreground);">提交审核闭环可追溯</div>
+              </div>
+              <div class="flex items-center gap-3 p-3.5 rounded-2xl" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(4px);">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--primary-100); color: var(--primary);">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+                <div class="text-sm font-medium" style="color: var(--foreground);">内网部署数据更安全</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧表单区 -->
+          <div class="p-10 flex flex-col justify-center" style="background: var(--card);">
+            <div class="mb-8">
+              <h2 class="text-2xl font-bold mb-2" style="color: var(--foreground);">欢迎回来</h2>
+              <p class="text-sm" style="color: var(--muted-foreground);">请使用工号登录系统</p>
+            </div>
+
+            <form class="space-y-5" onsubmit="return false;">
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--foreground);">用户名</label>
+                <div class="relative">
+                  <i data-lucide="user" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2" style="color: var(--muted-foreground);"></i>
+                  <input type="text" value="zhanggong" class="w-full pl-11 pr-4 py-3 rounded-xl border bg-card text-sm outline-none focus:ring-2 transition" style="border-color: var(--border); --tw-ring-color: var(--ring);" placeholder="请输入用户名"/>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--foreground);">密码</label>
+                <div class="relative">
+                  <i data-lucide="lock" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2" style="color: var(--muted-foreground);"></i>
+                  <input type="password" value="123456" class="w-full pl-11 pr-11 py-3 rounded-xl border bg-card text-sm outline-none focus:ring-2 transition" style="border-color: var(--border); --tw-ring-color: var(--ring);" placeholder="请输入密码"/>
+                  <i data-lucide="eye-off" class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer" style="color: var(--muted-foreground);"></i>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center gap-2 cursor-pointer" style="color: var(--foreground);">
+                  <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color: var(--primary);"/>
+                  <span>记住我</span>
+                </label>
+                <a class="font-medium hover:underline cursor-pointer" style="color: var(--primary);">忘记密码？</a>
+              </div>
+
+              <button data-dom-id="btn-login" type="submit" class="w-full py-3 rounded-xl font-medium text-base flex items-center justify-center gap-2 transition hover:opacity-90 cursor-pointer" style="background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-card);">
+                <i data-lucide="log-in" class="w-5 h-5"></i>
+                登 录
+              </button>
+            </form>
+
+            <div class="mt-8 pt-6 flex items-center justify-center gap-2 text-xs" style="border-top: 1px solid var(--border); color: var(--muted-foreground);">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>内网安全传输 · v2.6.0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 text-center text-xs" style="color: var(--muted-foreground);">
+          © 2026 设备信息动态管理系统 · 保留所有权利
+        </div>
+      </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

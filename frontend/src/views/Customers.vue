@@ -1,42 +1,134 @@
 <template>
-  <div class="cs-page"><div class="page-header"><h2>客户管理</h2><n-button type="primary" @click="openAdd">添加客户</n-button></div>
-    <n-data-table :columns="cols" :data="items" :loading="loading" :pagination="false" striped size="small" />
+  <div class="cs-page">
+    <div class="page-header">
+      <h2>客户管理</h2>
+      <el-button type="primary" @click="openAdd">添加客户</el-button>
+    </div>
 
-    <n-modal v-model:show="showForm" :title="editId?'编辑客户':'添加客户'" preset="card" style="width:520px">
-      <n-form ref="formRef" :model="form" :rules="rules" label-placement="left" label-width="80">
-        <n-grid :cols="2" :x-gap="12">
-          <n-form-item-gi label="名称" path="name"><n-input v-model:value="form.name" /></n-form-item-gi>
-          <n-form-item-gi label="联系人"><n-input v-model:value="form.contact" /></n-form-item-gi>
-          <n-form-item-gi label="电话"><n-input v-model:value="form.phone" /></n-form-item-gi>
-          <n-form-item-gi label="邮箱"><n-input v-model:value="form.email" /></n-form-item-gi>
-        </n-grid>
-        <n-form-item label="地址"><n-input v-model:value="form.address" /></n-form-item>
-        <n-form-item label="备注"><n-input v-model:value="form.remark" type="textarea" :rows="2" /></n-form-item>
-      </n-form>
-      <template #footer><n-space justify="end"><n-button @click="showForm=false">取消</n-button><n-button type="primary" @click="handleSave" :loading="saving">保存</n-button></n-space></template>
-    </n-modal>
+    <el-card shadow="never">
+      <el-table :data="items" v-loading="loading" stripe size="small">
+        <el-table-column prop="name" label="名称" show-overflow-tooltip />
+        <el-table-column prop="contact" label="联系人" width="100" />
+        <el-table-column prop="phone" label="电话" width="120" />
+        <el-table-column prop="equipment_count" label="设备数" width="80" align="center" />
+        <el-table-column label="创建时间" width="160" align="center">
+          <template #default="{row}">{{ new Date(row.created_at).toLocaleDateString('zh-CN') }}</template>
+        </el-table-column>
+        <el-table-column label="操作" min-width="140" align="center">
+          <template #default="{row}">
+            <div class="table-actions">
+              <el-button size="small" @click="openEdit(row)">编辑</el-button>
+              <el-button size="small" type="danger" @click="handleDel(row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <el-dialog v-model="showForm" :title="editId?'编辑客户':'添加客户'" width="520px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+        <el-row :gutter="12">
+          <el-col :span="12">
+            <el-form-item label="名称" prop="name"><el-input v-model="form.name" /></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人"><el-input v-model="form.contact" /></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="电话"><el-input v-model="form.phone" /></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邮箱"><el-input v-model="form.email" /></el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="地址"><el-input v-model="form.address" /></el-form-item>
+        <el-form-item label="备注"><el-input v-model="form.remark" type="textarea" :rows="2" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showForm=false">取消</el-button>
+        <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref,reactive,onMounted,h } from 'vue'
-import { useMessage,useDialog } from 'naive-ui'
-import { NCard,NButton,NSpace,NModal,NForm,NFormItem,NFormItemGi,NGrid,NInput,NDataTable,NTag } from 'naive-ui'
+import { ref, reactive, onMounted } from 'vue'
+import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
-import axios from 'axios'
-const msg=useMessage();const dialog=useDialog();const userStore=useUserStore();const base=import.meta.env.VITE_API_URL||'/api';const hdrs=()=>({Authorization:'Bearer '+userStore.token})
-const loading=ref(false);const items=ref<any[]>([]);const showForm=ref(false);const saving=ref(false);const formRef=ref();const editId=ref<number|null>(null)
-const form=reactive({name:'',contact:'',phone:'',email:'',address:'',remark:''})
-const rules={name:[{required:true,message:'请输入名称'}]}
+import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '@/api'
 
-const cols=[{title:'名称',key:'name',ellipsis:{tooltip:true}},{title:'联系人',key:'contact',width:100},{title:'电话',key:'phone',width:120},{title:'设备数',key:'equipment_count',width:80},{title:'创建时间',key:'created_at',width:160,render:(r:any)=>new Date(r.created_at).toLocaleDateString('zh-CN')},{title:'操作',key:'actions',width:140,render:(row:any)=>h(NSpace,{size:'small'},{default:()=>[h(NButton,{size:'tiny',onClick:()=>openEdit(row)},{default:()=>'编辑'}),h(NButton,{size:'tiny',type:'error',onClick:()=>handleDel(row)},{default:()=>'删除'})]})}]
+const userStore = useUserStore()
 
-const fetchAll=async()=>{loading.value=true;try{const r=await axios.get(base+'/customers/',{headers:hdrs()});items.value=r.data}catch{}finally{loading.value=false}}
-const openAdd=()=>{editId.value=null;Object.assign(form,{name:'',contact:'',phone:'',email:'',address:'',remark:''});showForm.value=true}
-const openEdit=(r:any)=>{editId.value=r.id;Object.assign(form,{name:r.name,contact:r.contact||'',phone:r.phone||'',email:r.email||'',address:r.address||'',remark:r.remark||''});showForm.value=true}
-const handleSave=async()=>{try{await formRef.value?.validate()}catch{return};saving.value=true;try{if(editId.value){await axios.put(base+'/customers/'+editId.value,form,{headers:hdrs()})}else{await axios.post(base+'/customers/',form,{headers:hdrs()})};msg.success('已保存');showForm.value=false;fetchAll()}catch(e:any){msg.error(e?.response?.data?.detail||'失败')}finally{saving.value=false}}
-const handleDel=(r:any)=>{dialog.warning({title:'确认删除',content:'确定删除客户"'+r.name+'"？',positiveText:'确定',negativeText:'取消',onPositiveClick:async()=>{try{await axios.delete(base+'/customers/'+r.id,{headers:hdrs()});msg.success('已删除');fetchAll()}catch{msg.error('失败')}}})}
-onMounted(()=>fetchAll())
+const loading = ref(false)
+const items = ref<any[]>([])
+const showForm = ref(false)
+const saving = ref(false)
+const formRef = ref<FormInstance>()
+const editId = ref<number | null>(null)
+const form = reactive({ name: '', contact: '', phone: '', email: '', address: '', remark: '' })
+const rules = { name: [{ required: true, message: '请输入名称', trigger: 'blur' }] }
+
+const fetchAll = async () => {
+  loading.value = true
+  try {
+    const res = await getCustomers()
+    items.value = res.data
+  } catch (error) {
+    console.error('获取客户列表失败:', error)
+    ElMessage.error('获取客户列表失败')
+  } finally {
+    loading.value = false
+  }
+}
+const openAdd = () => {
+  editId.value = null
+  Object.assign(form, { name: '', contact: '', phone: '', email: '', address: '', remark: '' })
+  showForm.value = true
+}
+const openEdit = (r: any) => {
+  editId.value = r.id
+  Object.assign(form, { name: r.name, contact: r.contact || '', phone: r.phone || '', email: r.email || '', address: r.address || '', remark: r.remark || '' })
+  showForm.value = true
+}
+const handleSave = async () => {
+  if (!formRef.value) return
+  try { await formRef.value.validate() } catch { return }
+  saving.value = true
+  try {
+    if (editId.value) {
+      await updateCustomer(editId.value, form)
+    } else {
+      await createCustomer(form)
+    }
+    ElMessage.success('已保存')
+    showForm.value = false
+    fetchAll()
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.detail || '保存失败')
+  } finally {
+    saving.value = false
+  }
+}
+const handleDel = (r: any) => {
+  ElMessageBox.confirm('确定删除客户"' + r.name + '"？', '确认删除', { type: 'warning' })
+    .then(async () => {
+      try {
+        await deleteCustomer(r.id)
+        ElMessage.success('已删除')
+        fetchAll()
+      } catch (error) {
+        console.error('删除客户失败:', error)
+        ElMessage.error('删除失败')
+      }
+    })
+    .catch(() => { })
+}
+onMounted(() => fetchAll())
 </script>
 
-<style scoped>.cs-page{/*padding*/}.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.page-header h2{margin:0;font-size:24px;font-weight:600}</style>
+<style scoped>
+.cs-page { /* padding */ }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px }
+.page-header h2 { margin: 0; font-size: 24px; font-weight: 600 }
+</style>

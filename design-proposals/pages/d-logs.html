@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志管理 · 清新自然</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 D · 清新自然风 (Fresh Natural)
+   设计理念：柔白背景 + 森林绿主色；圆润柔和、友好亲和；
+   大圆角、柔和阴影、有机形态，像消费级健康/环保产品后台。
+   适合：面向一线工程师、强调易用与温度的设备管家。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+:root {
+  /* —— 品牌主色：森林绿（单一色相）—— */
+  --primary-50:  #F0FDF4;
+  --primary-100: #DCFCE7;
+  --primary-300: #86EFAC;
+  --primary-500: #2F855A;
+  --primary-600: #276749;
+  --primary-700: #22543D;
+
+  /* —— 暖中性阶 —— */
+  --sage-50:  #FDFCF8;
+  --sage-100: #F6F7F3;
+  --sage-200: #EAF0EA;
+  --sage-300: #D7E2D8;
+  --sage-400: #A8BCAB;
+  --sage-500: #5C7268;
+  --sage-700: #38503F;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #FDFCF8;
+  --foreground: #1F2A24;
+  --card: #FFFFFF;
+  --card-foreground: #1F2A24;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2A24;
+  --primary: #2F855A;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EAF0EA;
+  --secondary-foreground: #38503F;
+  --muted: #F6F7F3;
+  --muted-foreground: #5C7268;
+  --accent: #E3F6E9;
+  --accent-foreground: #276749;
+  --destructive: #C53030;
+  --destructive-foreground: #FFFFFF;
+  --border: #E3EAE4;
+  --input: #E3EAE4;
+  --ring: #2F855A;
+
+  /* —— 圆角：柔和偏大（不超 16px）—— */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* —— 状态色：自然色调 —— */
+  --state-success: #2F855A;
+  --state-warning: #D69E2E;
+  --state-error:   #C53030;
+  --state-info:    #319795;
+
+  /* —— 图表色：自然色系 —— */
+  --chart-1: #2F855A;
+  --chart-2: #38B2AC;
+  --chart-3: #D69E2E;
+  --chart-4: #68A063;
+  --chart-5: #8B9D83;
+
+  /* —— 字体：圆润无衬线 —— */
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', system-ui, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 阴影：柔和投影，体现亲和 —— */
+  --shadow-card: 0 1px 2px rgba(31, 42, 36, 0.04), 0 2px 8px rgba(31, 42, 36, 0.04);
+  --shadow-popover: 0 8px 24px rgba(31, 42, 36, 0.10);
+  --shadow-drawer: -8px 0 32px rgba(31, 42, 36, 0.10);
+
+  /* —— 间距与密度：中等，宽松舒适 —— */
+  --space-page: 24px;
+  --space-card: 20px;
+  --density: 3;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 自然风：柔和圆角卡片 */
+.card-natural {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* 叶片状柔和高亮 */
+.pill-soft {
+  border-radius: 999px;
+  padding: 4px 12px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main data-viewport-mode="app-shell" class="h-screen overflow-hidden min-h-0 flex" style="background: var(--background);">
+      <!-- 侧栏 -->
+      <aside class="w-60 flex-shrink-0 flex flex-col" style="background: var(--card); border-right: 1px solid var(--border); box-shadow: 1px 0 8px rgba(31,42,36,0.03);">
+        <div class="px-5 py-5 flex items-center gap-3" style="border-bottom: 1px solid var(--border);">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center" style="background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-card);">
+            <i data-lucide="leaf" class="w-5 h-5"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-sm font-bold leading-tight truncate" style="color: var(--foreground);">设备信息动态</div>
+            <div class="text-xs" style="color: var(--muted-foreground);">管理系统</div>
+          </div>
+        </div>
+
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto no-scrollbar">
+          <div class="px-3 pb-1 text-[11px] font-medium tracking-wider uppercase" style="color: var(--muted-foreground);">工作台</div>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>仪表盘
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+            <i data-lucide="cpu" class="w-4 h-4"></i>设备管理
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium" style="background: var(--accent); color: var(--accent-foreground);">
+            <i data-lucide="clipboard-list" class="w-4 h-4"></i>日志管理
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>统计分析
+          </a>
+
+          <div class="px-3 pt-4 pb-1 text-[11px] font-medium tracking-wider uppercase" style="color: var(--muted-foreground);">协作</div>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i>批量上传
+            <span class="ml-auto text-[11px] px-1.5 py-0.5 rounded-md" style="background: var(--muted); color: var(--muted-foreground);">12</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+            <i data-lucide="bell" class="w-4 h-4"></i>通知中心
+            <span class="ml-auto text-[11px] px-1.5 py-0.5 rounded-md" style="background: var(--accent); color: var(--accent-foreground);">5</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+            <i data-lucide="settings" class="w-4 h-4"></i>系统设置
+          </a>
+        </nav>
+
+        <div class="px-3 py-3" style="border-top: 1px solid var(--border);">
+          <div class="flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-muted">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style="background: var(--accent); color: var(--accent-foreground);">张</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium truncate" style="color: var(--foreground);">张工</div>
+              <div class="text-xs truncate" style="color: var(--muted-foreground);">现场工程师</div>
+            </div>
+            <i data-lucide="chevrons-up-down" class="w-4 h-4" style="color: var(--muted-foreground);"></i>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主区 -->
+      <div class="flex-1 min-w-0 flex flex-col">
+        <header class="h-16 flex-shrink-0 flex items-center justify-between px-6" style="background: var(--card); border-bottom: 1px solid var(--border);">
+          <div class="flex items-center gap-3">
+            <h1 class="text-lg font-bold" style="color: var(--foreground);">日志管理</h1>
+            <span class="text-xs" style="color: var(--muted-foreground);">共 248 条</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--muted-foreground);"></i>
+              <input type="text" class="w-64 pl-10 pr-4 py-2 rounded-xl border bg-card text-sm outline-none focus:ring-2" style="border-color: var(--border); --tw-ring-color: var(--ring);" placeholder="搜索日志编号 / 设备"/>
+            </div>
+            <button class="relative w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span class="absolute top-2 right-2 w-2 h-2 rounded-full" style="background: var(--state-error);"></span>
+            </button>
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer" style="background: var(--accent); color: var(--accent-foreground);">张</div>
+          </div>
+        </header>
+
+        <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto p-6 space-y-5">
+          <!-- 筛选卡 -->
+          <div class="card-natural p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <i data-lucide="filter" class="w-4 h-4" style="color: var(--primary);"></i>
+                <span class="text-sm font-bold" style="color: var(--foreground);">筛选条件</span>
+              </div>
+              <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium cursor-pointer transition hover:opacity-90" style="background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-card);">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                新建日志
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-medium mb-1.5" style="color: var(--muted-foreground);">日志类型</label>
+                <select class="w-full px-3 py-2 rounded-xl border bg-card text-sm outline-none focus:ring-2 cursor-pointer" style="border-color: var(--border); --tw-ring-color: var(--ring); color: var(--foreground);">
+                  <option>全部类型</option>
+                  <option>安装</option><option>维修</option><option>报废</option><option>巡检</option>
+                  <option>保养</option><option>故障</option><option>配件</option><option>校准</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium mb-1.5" style="color: var(--muted-foreground);">状态</label>
+                <select class="w-full px-3 py-2 rounded-xl border bg-card text-sm outline-none focus:ring-2 cursor-pointer" style="border-color: var(--border); --tw-ring-color: var(--ring); color: var(--foreground);">
+                  <option>全部状态</option>
+                  <option>待审核</option><option>已通过</option><option>已驳回</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium mb-1.5" style="color: var(--muted-foreground);">设备</label>
+                <select class="w-full px-3 py-2 rounded-xl border bg-card text-sm outline-none focus:ring-2 cursor-pointer" style="border-color: var(--border); --tw-ring-color: var(--ring); color: var(--foreground);">
+                  <option>全部设备</option>
+                  <option>空压机A-12</option><option>包装机B-07</option><option>输送带C-03</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium mb-1.5" style="color: var(--muted-foreground);">日期范围</label>
+                <div class="flex items-center gap-2">
+                  <input type="date" value="2026-07-12" class="flex-1 px-3 py-2 rounded-xl border bg-card text-sm outline-none focus:ring-2" style="border-color: var(--border); --tw-ring-color: var(--ring); color: var(--foreground);"/>
+                  <span class="text-xs" style="color: var(--muted-foreground);">至</span>
+                  <input type="date" value="2026-07-18" class="flex-1 px-3 py-2 rounded-xl border bg-card text-sm outline-none focus:ring-2" style="border-color: var(--border); --tw-ring-color: var(--ring); color: var(--foreground);"/>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 mt-4 pt-4" style="border-top: 1px solid var(--border);">
+              <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium cursor-pointer hover:bg-muted" style="color: var(--muted-foreground);">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                重置
+              </button>
+              <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium cursor-pointer transition hover:opacity-90" style="background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-card);">
+                <i data-lucide="search" class="w-4 h-4"></i>
+                查询
+              </button>
+            </div>
+          </div>
+
+          <!-- 表格卡 -->
+          <div class="card-natural overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr style="background: var(--muted);">
+                    <th class="text-left font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">日志编号</th>
+                    <th class="text-left font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">设备名称</th>
+                    <th class="text-left font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">日志类型</th>
+                    <th class="text-left font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">提交人</th>
+                    <th class="text-left font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">提交时间</th>
+                    <th class="text-left font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">状态</th>
+                    <th class="text-right font-medium px-5 py-3.5 whitespace-nowrap" style="color: var(--muted-foreground);">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-dom-id="row-log-1" class="cursor-pointer transition" style="border-top: 1px solid var(--border);" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='transparent'">
+                    <td class="px-5 py-4 numeric" style="color: var(--foreground);">LOG-2026-0718-01</td>
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--primary-50); color: var(--primary);">
+                          <i data-lucide="wind" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-medium" style="color: var(--foreground);">空压机A-12</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="pill-soft text-xs">维修</span>
+                    </td>
+                    <td class="px-5 py-4" style="color: var(--foreground);">张工</td>
+                    <td class="px-5 py-4 numeric" style="color: var(--muted-foreground);">2026-07-18 09:24</td>
+                    <td class="px-5 py-4">
+                      <span class="text-xs px-2.5 py-1 rounded-full" style="background: #FEF3C7; color: var(--state-warning);">待审核</span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button class="inline-flex items-center gap-1 text-xs font-medium cursor-pointer hover:underline" style="color: var(--primary);">
+                        查看<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="cursor-pointer transition" style="border-top: 1px solid var(--border);" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='transparent'">
+                    <td class="px-5 py-4 numeric" style="color: var(--foreground);">LOG-2026-0717-03</td>
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--primary-50); color: var(--primary);">
+                          <i data-lucide="package" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-medium" style="color: var(--foreground);">包装机B-07</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="pill-soft text-xs">巡检</span>
+                    </td>
+                    <td class="px-5 py-4" style="color: var(--foreground);">李工</td>
+                    <td class="px-5 py-4 numeric" style="color: var(--muted-foreground);">2026-07-17 14:10</td>
+                    <td class="px-5 py-4">
+                      <span class="text-xs px-2.5 py-1 rounded-full" style="background: var(--primary-50); color: var(--state-success);">已通过</span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button class="inline-flex items-center gap-1 text-xs font-medium cursor-pointer hover:underline" style="color: var(--primary);">
+                        查看<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="cursor-pointer transition" style="border-top: 1px solid var(--border);" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='transparent'">
+                    <td class="px-5 py-4 numeric" style="color: var(--foreground);">LOG-2026-0717-02</td>
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--primary-50); color: var(--primary);">
+                          <i data-lucide="move-horizontal" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-medium" style="color: var(--foreground);">输送带C-03</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="pill-soft text-xs">故障</span>
+                    </td>
+                    <td class="px-5 py-4" style="color: var(--foreground);">王工</td>
+                    <td class="px-5 py-4 numeric" style="color: var(--muted-foreground);">2026-07-17 10:55</td>
+                    <td class="px-5 py-4">
+                      <span class="text-xs px-2.5 py-1 rounded-full" style="background: #FEF3C7; color: var(--state-warning);">待审核</span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button class="inline-flex items-center gap-1 text-xs font-medium cursor-pointer hover:underline" style="color: var(--primary);">
+                        查看<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="cursor-pointer transition" style="border-top: 1px solid var(--border);" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='transparent'">
+                    <td class="px-5 py-4 numeric" style="color: var(--foreground);">LOG-2026-0716-05</td>
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--primary-50); color: var(--primary);">
+                          <i data-lucide="flame" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-medium" style="color: var(--foreground);">锅炉D-01</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="pill-soft text-xs">保养</span>
+                    </td>
+                    <td class="px-5 py-4" style="color: var(--foreground);">张工</td>
+                    <td class="px-5 py-4 numeric" style="color: var(--muted-foreground);">2026-07-16 16:30</td>
+                    <td class="px-5 py-4">
+                      <span class="text-xs px-2.5 py-1 rounded-full" style="background: var(--primary-50); color: var(--state-success);">已通过</span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button class="inline-flex items-center gap-1 text-xs font-medium cursor-pointer hover:underline" style="color: var(--primary);">
+                        查看<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="cursor-pointer transition" style="border-top: 1px solid var(--border);" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='transparent'">
+                    <td class="px-5 py-4 numeric" style="color: var(--foreground);">LOG-2026-0716-04</td>
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--primary-50); color: var(--primary);">
+                          <i data-lucide="bot" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-medium" style="color: var(--foreground);">机械手E-09</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="pill-soft text-xs">安装</span>
+                    </td>
+                    <td class="px-5 py-4" style="color: var(--foreground);">赵工</td>
+                    <td class="px-5 py-4 numeric" style="color: var(--muted-foreground);">2026-07-16 11:20</td>
+                    <td class="px-5 py-4">
+                      <span class="text-xs px-2.5 py-1 rounded-full" style="background: #FDE8E8; color: var(--state-error);">已驳回</span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button class="inline-flex items-center gap-1 text-xs font-medium cursor-pointer hover:underline" style="color: var(--primary);">
+                        查看<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="cursor-pointer transition" style="border-top: 1px solid var(--border);" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='transparent'">
+                    <td class="px-5 py-4 numeric" style="color: var(--foreground);">LOG-2026-0715-02</td>
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--primary-50); color: var(--primary);">
+                          <i data-lucide="snowflake" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-medium" style="color: var(--foreground);">冷却塔F-02</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="pill-soft text-xs">校准</span>
+                    </td>
+                    <td class="px-5 py-4" style="color: var(--foreground);">李工</td>
+                    <td class="px-5 py-4 numeric" style="color: var(--muted-foreground);">2026-07-15 09:00</td>
+                    <td class="px-5 py-4">
+                      <span class="text-xs px-2.5 py-1 rounded-full" style="background: var(--primary-50); color: var(--state-success);">已通过</span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button class="inline-flex items-center gap-1 text-xs font-medium cursor-pointer hover:underline" style="color: var(--primary);">
+                        查看<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="flex items-center justify-between px-5 py-4" style="border-top: 1px solid var(--border); background: var(--muted);">
+              <div class="text-xs" style="color: var(--muted-foreground);">共 <span class="font-bold numeric" style="color: var(--foreground);">248</span> 条 · 第 <span class="numeric" style="color: var(--foreground);">1</span> / <span class="numeric" style="color: var(--foreground);">42</span> 页</div>
+              <div class="flex items-center gap-1">
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:bg-card disabled:opacity-40" style="color: var(--muted-foreground);" disabled>
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button class="min-w-8 h-8 px-2 rounded-lg text-sm font-medium cursor-pointer" style="background: var(--primary); color: var(--primary-foreground);">1</button>
+                <button class="min-w-8 h-8 px-2 rounded-lg text-sm cursor-pointer hover:bg-card" style="color: var(--muted-foreground);">2</button>
+                <button class="min-w-8 h-8 px-2 rounded-lg text-sm cursor-pointer hover:bg-card" style="color: var(--muted-foreground);">3</button>
+                <span class="px-1 text-sm" style="color: var(--muted-foreground);">…</span>
+                <button class="min-w-8 h-8 px-2 rounded-lg text-sm cursor-pointer hover:bg-card" style="color: var(--muted-foreground);">42</button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:bg-card" style="color: var(--muted-foreground);">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

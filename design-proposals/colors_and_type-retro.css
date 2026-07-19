@@ -1,0 +1,122 @@
+/* ============================================================
+   方案 C · 复古怀旧风 (Retro Nostalgic)
+   设计理念：暖纸背景 + 咖啡主色 + 衬线标题；文档式档案排版；
+   方正卡片、实线边框、印章/工单感，像一本工业设备维修档案册。
+   适合：注重记录留痕、档案属性强的设备维保系统。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：咖啡棕（暖色，单一色相）—— */
+  --primary-50:  #F5EFE6;
+  --primary-100: #E8DCC6;
+  --primary-300: #B08D6E;
+  --primary-500: #6F4E37;
+  --primary-700: #4A3322;
+
+  /* —— 暖中性阶（纸感）—— */
+  --paper-50:  #FBF6EC;
+  --paper-100: #F5EFE6;
+  --paper-200: #EDE3D2;
+  --paper-300: #D9C9B0;
+  --paper-500: #8A6F52;
+  --paper-700: #5C4633;
+  --ink-900:   #3D2C1E;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #F5EFE6;
+  --foreground: #3D2C1E;
+  --card: #FBF6EC;
+  --card-foreground: #3D2C1E;
+  --popover: #FBF6EC;
+  --popover-foreground: #3D2C1E;
+  --primary: #6F4E37;
+  --primary-foreground: #FBF6EC;
+  --secondary: #EDE3D2;
+  --secondary-foreground: #5C4633;
+  --muted: #EDE3D2;
+  --muted-foreground: #8A6F52;
+  --accent: #EFE4CF;
+  --accent-foreground: #6F4E37;
+  --destructive: #8B2C1B;
+  --destructive-foreground: #FBF6EC;
+  --border: #D9C9B0;
+  --input: #D9C9B0;
+  --ring: #6F4E37;
+
+  /* —— 圆角：方正，档案卡片感 —— */
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+
+  /* —— 状态色：泥土色系（复古调）—— */
+  --state-success: #4B6B3B;  /* 橄榄绿 */
+  --state-warning: #B7410E;  /* 赭石/铁锈 */
+  --state-error:   #8B2C1B;  /* 暗砖红 */
+  --state-info:    #6F4E37;  /* 咖啡 */
+
+  /* —— 图表色：大地色系 —— */
+  --chart-1: #6F4E37;
+  --chart-2: #B7410E;
+  --chart-3: #4B6B3B;
+  --chart-4: #C9A227;
+  --chart-5: #8A6F52;
+
+  /* —— 字体：衬线标题 + 无衬线正文 —— */
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Noto Sans SC', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Courier New', 'SFMono-Regular', monospace;
+
+  /* —— 阴影：纸面无投影，浮层用柔棕阴影 —— */
+  --shadow-card: none;
+  --shadow-popover: 0 6px 18px rgba(74, 51, 34, 0.18);
+  --shadow-drawer: -8px 0 28px rgba(74, 51, 34, 0.20);
+
+  /* —— 间距与密度：中等偏松，文档式 —— */
+  --space-page: 28px;
+  --space-card: 22px;
+  --density: 2;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* 复古风：衬线标题 */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+/* 纸面卡片：实线边框、双线分隔 */
+.card-retro {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  background-image: linear-gradient(180deg, rgba(176, 141, 110, 0.04), transparent 120px);
+}
+
+/* 印章/工单标签 */
+.stamp {
+  border: 2px solid var(--state-error);
+  color: var(--state-error);
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+  transform: rotate(-6deg);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  opacity: 0.85;
+}
+
+/* 等宽（工单编号） */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

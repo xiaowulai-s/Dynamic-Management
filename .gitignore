@@ -16,3 +16,26 @@ __pycache__/
 # Build
 dist/
 build/
+
+# 临时文件（编辑器产生）
+*.tmp
+*.tmp.*
+*.bak
+*.swp
+
+# 迁移产物（含数据库备份，不应提交）
+迁移包/
+*.dump
+*.pgc
+
+# Celery 调度文件
+celerybeat-schedule
+celerybeat-schedule.*
+
+# 上传文件（运行时数据）
+uploads/*
+!backend/uploads/.gitkeep
+
+# 数据库卷
+postgres_data/
+redis_data/

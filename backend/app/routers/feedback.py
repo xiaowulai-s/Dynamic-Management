@@ -12,8 +12,8 @@ router = APIRouter()
 
 
 class FeedbackCreate(BaseModel):
-    title: str = Field(..., max_length=200)
-    content: str = Field(..., max_length=2000)
+    title: str = Field(..., min_length=1, max_length=200)  # Q21: 添加 min_length
+    content: str = Field(..., min_length=1, max_length=2000)  # Q21: 添加 min_length
 
 
 class FeedbackReply(BaseModel):
@@ -57,21 +57,30 @@ async def list_feedbacks(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """获取反馈列表（P1: 批量查询用户名，消除 N+1）"""
     if current_user.role in ("admin", "super_admin"):
         items = db.query(Feedback).order_by(Feedback.created_at.desc()).all()
     else:
         items = db.query(Feedback).filter(Feedback.user_id == current_user.id).order_by(Feedback.created_at.desc()).all()
 
+    # 批量查询用户名，避免循环内 N+1 查询
+    user_ids = {fb.user_id for fb in items if fb.user_id}
+    user_ids.update({fb.replied_by for fb in items if fb.replied_by})
+    user_map = {}
+    if user_ids:
+        users = db.query(User).filter(User.id.in_(user_ids)).all()
+        user_map = {u.id: u.username for u in users}
+
     result = []
     for fb in items:
-        user = db.query(User).filter(User.id == fb.user_id).first()
-        replier = db.query(User).filter(User.id == fb.replied_by).first() if fb.replied_by else None
         result.append(FeedbackResponse(
             id=fb.id, title=fb.title, content=fb.content,
-            reply=fb.reply, replied_by_name=replier.username if replier else None,
+            reply=fb.reply,
+            replied_by_name=user_map.get(fb.replied_by) if fb.replied_by else None,
             replied_at=fb.replied_at.isoformat() if fb.replied_at else None,
             is_read=fb.is_read, status=fb.status,
-            created_at=fb.created_at.isoformat(), user_name=user.username if user else "未知"
+            created_at=fb.created_at.isoformat(),
+            user_name=user_map.get(fb.user_id, "未知")
         ))
     return result
 
@@ -114,8 +123,10 @@ async def mark_read(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """标记反馈已读（S14: 不存在时返回 404）"""
     fb = db.query(Feedback).filter(Feedback.id == feedback_id, Feedback.user_id == current_user.id).first()
-    if fb:
-        fb.is_read = True
-        db.commit()
+    if not fb:
+        raise HTTPException(status_code=404, detail="反馈不存在")
+    fb.is_read = True
+    db.commit()
     return {"message": "ok"}

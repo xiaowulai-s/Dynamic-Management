@@ -8,19 +8,15 @@ from app.config import settings
 from app.utils.auth import create_access_token, get_current_user
 from pydantic import BaseModel, Field
 from typing import Optional
+from passlib.context import CryptContext
+import logging
+
+logger = logging.getLogger(__name__)
+
+# 统一密码哈希上下文（Q17/Q18: 模块级复用，统一 passlib）
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router = APIRouter()
-
-
-# 测试端点
-@router.post("/test-login", summary="测试登录（不使用OAuth2）")
-async def test_login(username: str = Form(...), password: str = Form(...)):
-    """测试登录，不使用OAuth2PasswordRequestForm"""
-    return {
-        "username": username,
-        "password_length": len(password),
-        "password": password
-    }
 
 
 # Pydantic模型
@@ -79,10 +75,7 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
             detail="两次输入的密码不一致"
         )
 
-    # 创建新用户
-    from passlib.context import CryptContext
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+    # 创建新用户（统一使用 passlib）
     new_user = User(
         username=user_data.username,
         password_hash=pwd_context.hash(user_data.password),
@@ -113,11 +106,6 @@ async def login(
     - 使用OAuth2标准表单格式
     - 返回JWT令牌
     """
-    # 调试日志
-    import sys
-    print(f"[DEBUG] form_data.username: {form_data.username}", file=sys.stderr)
-    print(f"[DEBUG] form_data.password length: {len(form_data.password) if form_data.password else 0}", file=sys.stderr)
-
     # 查找用户
     user = db.query(User).filter(User.username == form_data.username).first()
 
@@ -128,18 +116,8 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # 验证密码
-    import bcrypt
-    try:
-        password_bytes = form_data.password.encode('utf-8')
-        hash_bytes = user.password_hash.encode('utf-8')
-        if not bcrypt.checkpw(password_bytes, hash_bytes):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="用户名或密码错误",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-    except (ValueError, TypeError):
+    # 验证密码（统一使用 passlib）
+    if not pwd_context.verify(form_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="用户名或密码错误",
@@ -159,6 +137,8 @@ async def login(
         data={"sub": user.username},
         expires_delta=access_token_expires
     )
+
+    logger.info("用户登录成功: %s", user.username)
 
     return Token(
         access_token=access_token,
@@ -192,10 +172,7 @@ async def change_password(
     db: Session = Depends(get_db)
 ):
     """修改当前用户密码"""
-    from passlib.context import CryptContext
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-    # 验证旧密码
+    # 验证旧密码（统一使用 passlib）
     if not pwd_context.verify(password_data.old_password, current_user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -216,14 +193,22 @@ async def get_users(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """获取用户列表（仅管理员可用）"""
-    if current_user.role != "admin":
+    """获取用户列表（仅管理员可用）
+    - super_admin: 可看到所有用户
+    - admin: 仅能看到 admin 和 user，看不到 super_admin
+    """
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="权限不足"
         )
 
-    users = db.query(User).offset(skip).limit(limit).all()
+    query = db.query(User)
+    # 管理员看不到超级管理员，也看不到测试账号
+    if current_user.role == "admin":
+        query = query.filter(User.role != "super_admin").filter(User.is_test == False)
+
+    users = query.offset(skip).limit(limit).all()
     return [
         UserResponse(
             id=user.id,
@@ -234,3 +219,174 @@ async def get_users(
         )
         for user in users
     ]
+
+
+# ============ 用户管理接口（Q26: 三级角色权限细分） ============
+
+class UserCreate(BaseModel):
+    """管理员创建用户模型"""
+    username: str = Field(..., min_length=3, max_length=50, description="用户名")
+    password: str = Field(..., min_length=6, max_length=100, description="密码")
+    role: str = Field("user", description="角色：super_admin/admin/user")
+    is_active: bool = Field(True, description="是否激活")
+
+
+class UserUpdate(BaseModel):
+    """更新用户模型"""
+    role: Optional[str] = Field(None, description="角色：super_admin/admin/user")
+    is_active: Optional[bool] = Field(None, description="是否激活")
+    password: Optional[str] = Field(None, min_length=6, max_length=100, description="新密码（可选）")
+
+
+@router.post("/users", response_model=UserResponse, summary="创建用户（管理员）")
+async def create_user(
+    user_data: UserCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """创建用户
+    - super_admin/admin 可用
+    - admin 不能创建 super_admin
+    - 用户名必须唯一
+    """
+    # 权限校验
+    if current_user.role not in ("admin", "super_admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="权限不足")
+
+    # admin 不能创建 super_admin
+    if user_data.role == "super_admin" and current_user.role != "super_admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无权创建超级管理员")
+
+    # 角色合法性
+    if user_data.role not in ("super_admin", "admin", "user"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="无效的角色")
+
+    # 用户名唯一
+    existing = db.query(User).filter(User.username == user_data.username).first()
+    if existing:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="用户名已存在")
+
+    new_user = User(
+        username=user_data.username,
+        password_hash=pwd_context.hash(user_data.password),
+        role=user_data.role,
+        is_active=user_data.is_active
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    logger.info("用户 %s 创建了新用户: %s (%s)", current_user.username, new_user.username, new_user.role)
+
+    return UserResponse(
+        id=new_user.id,
+        username=new_user.username,
+        role=new_user.role,
+        is_active=new_user.is_active,
+        created_at=new_user.created_at.isoformat()
+    )
+
+
+@router.put("/users/{user_id}", response_model=UserResponse, summary="更新用户（管理员）")
+async def update_user(
+    user_id: int,
+    user_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """更新用户角色/状态/密码
+    - super_admin: 可更新所有人
+    - admin: 不能更新 super_admin；不能将用户提升为 super_admin
+    """
+    if current_user.role not in ("admin", "super_admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="权限不足")
+
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
+
+    # admin 不能操作 super_admin
+    if current_user.role == "admin" and target.role == "super_admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无权修改超级管理员")
+
+    # admin 不能将用户提升为 super_admin
+    if current_user.role == "admin" and user_data.role == "super_admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无权设置超级管理员角色")
+
+    # 角色合法性
+    if user_data.role is not None and user_data.role not in ("super_admin", "admin", "user"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="无效的角色")
+
+    if user_data.role is not None:
+        target.role = user_data.role
+    if user_data.is_active is not None:
+        target.is_active = user_data.is_active
+    if user_data.password is not None:
+        target.password_hash = pwd_context.hash(user_data.password)
+
+    db.commit()
+    db.refresh(target)
+
+    logger.info("用户 %s 更新了用户: %s", current_user.username, target.username)
+
+    return UserResponse(
+        id=target.id,
+        username=target.username,
+        role=target.role,
+        is_active=target.is_active,
+        created_at=target.created_at.isoformat()
+    )
+
+
+@router.delete("/users/{user_id}", summary="删除用户（管理员）")
+async def delete_user(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """删除用户
+    - super_admin: 可删除所有人（但不能删自己）
+    - admin: 只能删除 admin/user，不能删除 super_admin，也不能删自己
+    - 删除前置空所有外键引用，保留历史数据（设备/日志/反馈的创建人/操作人显示为"未知"）
+    """
+    if current_user.role not in ("admin", "super_admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="权限不足")
+
+    # 不能删除自己
+    if current_user.id == user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="不能删除当前登录用户")
+
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
+
+    # admin 不能删除 super_admin
+    if current_user.role == "admin" and target.role == "super_admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无权删除超级管理员")
+
+    # 置空所有外键引用，避免破坏历史数据
+    from app.models.equipment import Equipment
+    from app.models.logs import Log
+    from app.models.feedback import Feedback
+    from app.models.approval import ApprovalConfig, SystemConfig, AuditLog
+
+    # nullable=False 已迁移为 nullable=True 的字段：直接置空
+    db.query(Equipment).filter(Equipment.created_by == user_id).update({Equipment.created_by: None})
+    db.query(Log).filter(Log.operator_id == user_id).update({Log.operator_id: None})
+    db.query(Feedback).filter(Feedback.user_id == user_id).update({Feedback.user_id: None})
+
+    # 原本就 nullable=True 的字段：置空
+    db.query(Log).filter(Log.approver_id == user_id).update({Log.approver_id: None})
+    db.query(Feedback).filter(Feedback.replied_by == user_id).update({Feedback.replied_by: None})
+    db.query(ApprovalConfig).filter(ApprovalConfig.created_by == user_id).update({ApprovalConfig.created_by: None})
+    db.query(SystemConfig).filter(SystemConfig.updated_by == user_id).update({SystemConfig.updated_by: None})
+    db.query(AuditLog).filter(AuditLog.user_id == user_id).update({AuditLog.user_id: None})
+
+    # 通知表有 cascade delete-orphan，会随用户一起删除，无需手动处理
+
+    db.delete(target)
+    db.commit()
+
+    logger.info("用户 %s 删除了用户: %s", current_user.username, target.username)
+
+    return {"message": "用户删除成功"}

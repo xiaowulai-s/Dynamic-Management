@@ -1,0 +1,57 @@
+{
+  "project": {
+    "name": "设备管理界面方案设计",
+    "deviceType": "desktop",
+    "operatingMode": "free-explore",
+    "caseFamily": "free_exploration",
+    "routingReason": "多风格探索：用户明确要求4套差异化风格(现代简约/科技未来/复古怀旧/清新自然)，每套5页，可在现有Vue3+Element Plus+ECharts技术栈落地重构。",
+    "styleContinuityAnchors": {
+      "note": "每套风格内部一致；跨风格刻意差异化。各风格见 tokenSourceFiles 对应 CSS 的设计理念注释。",
+      "sharedContentContext": "设备信息动态管理系统：现场工程师在内网PC端提交设备安装/维修/巡检等8类日志，管理员审核。核心对象：设备、日志、审批。8类日志类型：安装/维修/报废/巡检/保养/故障/配件/校准。系统已有页面：仪表盘/设备管理/日志管理/日志详情/统计分析/批量上传/系统设置/通知中心/用户管理。",
+      "pageFlowPerStyle": "登录 → 仪表盘 → 日志管理(列表) → 日志详情 → 新建日志表单"
+    },
+    "generationTree": { "root": { "kind": "project-shell", "children": "20 page-leaf nodes (4 styles × 5 pages), flat, no shared fragments; consistency via per-style sharedProjectShellContract" } }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "libraryIdentity": null,
+    "tokenSourceFiles": [
+      "colors_and_type-minimal.css",
+      "colors_and_type-tech.css",
+      "colors_and_type-retro.css",
+      "colors_and_type-natural.css"
+    ],
+    "themeMode": { "minimal": "light", "tech": "dark", "retro": "light", "natural": "light" }
+  },
+  "pagePlan": [
+    { "id": "page-a-login", "group": 0, "style": "minimal", "title": "登录页 · 现代简约", "htmlSrc": "pages/a-login.html", "css": "colors_and_type-minimal.css", "viewportMode": "document-scroll", "chartsRequired": false },
+    { "id": "page-a-dashboard", "group": 0, "style": "minimal", "title": "仪表盘 · 现代简约", "htmlSrc": "pages/a-dashboard.html", "css": "colors_and_type-minimal.css", "viewportMode": "app-shell", "chartsRequired": true },
+    { "id": "page-a-logs", "group": 0, "style": "minimal", "title": "日志管理 · 现代简约", "htmlSrc": "pages/a-logs.html", "css": "colors_and_type-minimal.css", "viewportMode": "app-shell", "chartsRequired": false },
+    { "id": "page-a-log-detail", "group": 0, "style": "minimal", "title": "日志详情 · 现代简约", "htmlSrc": "pages/a-log-detail.html", "css": "colors_and_type-minimal.css", "viewportMode": "app-shell", "chartsRequired": false },
+    { "id": "page-a-log-form", "group": 0, "style": "minimal", "title": "新建日志 · 现代简约", "htmlSrc": "pages/a-log-form.html", "css": "colors_and_type-minimal.css", "viewportMode": "app-shell", "chartsRequired": false },
+
+    { "id": "page-b-login", "group": 1, "style": "tech", "title": "登录页 · 科技未来", "htmlSrc": "pages/b-login.html", "css": "colors_and_type-tech.css", "viewportMode": "document-scroll", "chartsRequired": false, "theme": "dark" },
+    { "id": "page-b-dashboard", "group": 1, "style": "tech", "title": "仪表盘 · 科技未来", "htmlSrc": "pages/b-dashboard.html", "css": "colors_and_type-tech.css", "viewportMode": "app-shell", "chartsRequired": true, "theme": "dark" },
+    { "id": "page-b-logs", "group": 1, "style": "tech", "title": "日志管理 · 科技未来", "htmlSrc": "pages/b-logs.html", "css": "colors_and_type-tech.css", "viewportMode": "app-shell", "chartsRequired": false, "theme": "dark" },
+    { "id": "page-b-log-detail", "group": 1, "style": "tech", "title": "日志详情 · 科技未来", "htmlSrc": "pages/b-log-detail.html", "css": "colors_and_type-tech.css", "viewportMode": "app-shell", "chartsRequired": false, "theme": "dark" },
+    { "id": "page-b-log-form", "group": 1, "style": "tech", "title": "新建日志 · 科技未来", "htmlSrc": "pages/b-log-form.html", "css": "colors_and_type-tech.css", "viewportMode": "app-shell", "chartsRequired": false, "theme": "dark" },
+
+    { "id": "page-c-login", "group": 2, "style": "retro", "title": "登录页 · 复古怀旧", "htmlSrc": "pages/c-login.html", "css": "colors_and_type-retro.css", "viewportMode": "document-scroll", "chartsRequired": false },
+    { "id": "page-c-dashboard", "group": 2, "style": "retro", "title": "仪表盘 · 复古怀旧", "htmlSrc": "pages/c-dashboard.html", "css": "colors_and_type-retro.css", "viewportMode": "app-shell", "chartsRequired": true },
+    { "id": "page-c-logs", "group": 2, "style": "retro", "title": "日志管理 · 复古怀旧", "htmlSrc": "pages/c-logs.html", "css": "colors_and_type-retro.css", "viewportMode": "app-shell", "chartsRequired": false },
+    { "id": "page-c-log-detail", "group": 2, "style": "retro", "title": "日志详情 · 复古怀旧", "htmlSrc": "pages/c-log-detail.html", "css": "colors_and_type-retro.css", "viewportMode": "app-shell", "chartsRequired": false },
+    { "id": "page-c-log-form", "group": 2, "style": "retro", "title": "新建日志 · 复古怀旧", "htmlSrc": "pages/c-log-form.html", "css": "colors_and_type-retro.css", "viewportMode": "app-shell", "chartsRequired": false },
+
+    { "id": "page-d-login", "group": 3, "style": "natural", "title": "登录页 · 清新自然", "htmlSrc": "pages/d-login.html", "css": "colors_and_type-natural.css", "viewportMode": "document-scroll", "chartsRequired": false },
+    { "id": "page-d-dashboard", "group": 3, "style": "natural", "title": "仪表盘 · 清新自然", "htmlSrc": "pages/d-dashboard.html", "css": "colors_and_type-natural.css", "viewportMode": "app-shell", "chartsRequired": true },
+    { "id": "page-d-logs", "group": 3, "style": "natural", "title": "日志管理 · 清新自然", "htmlSrc": "pages/d-logs.html", "css": "colors_and_type-natural.css", "viewportMode": "app-shell", "chartsRequired": false },
+    { "id": "page-d-log-detail", "group": 3, "style": "natural", "title": "日志详情 · 清新自然", "htmlSrc": "pages/d-log-detail.html", "css": "colors_and_type-natural.css", "viewportMode": "app-shell", "chartsRequired": false },
+    { "id": "page-d-log-form", "group": 3, "style": "natural", "title": "新建日志 · 清新自然", "htmlSrc": "pages/d-log-form.html", "css": "colors_and_type-natural.css", "viewportMode": "app-shell", "chartsRequired": false }
+  ],
+  "imageInventory": { "planned": 0, "rationale": "B2B内网工业管理工具，采用CSS/SVG视觉表达(网格、扫描线、印章、渐变)更专业，无需AI生成位图。" },
+  "wiringPlan": {
+    "visibleEdgesPerGroup": ["login→dashboard(btn-login)", "dashboard→logs(nav-logs)", "logs→log-detail(row-log-1)", "log-detail→log-form(btn-new-log)"],
+    "hiddenEdgesPerGroup": ["log-detail→logs(btn-back,hideEdge)", "log-form→logs(btn-back,hideEdge)"],
+    "totalVisibleEdges": 16
+  }
+}

@@ -44,7 +44,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
-import { getNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification } from '@/api'
+import { getNotifications, markNotificationRead, markAllRead, deleteNotification } from '@/api'
 import NotificationList from '@/components/NotificationList.vue'
 
 const userStore = useUserStore()
@@ -86,7 +86,7 @@ const handleMarkRead = async (id: number) => {
 
 const handleMarkAllRead = async () => {
   try {
-    await markAllNotificationsRead()
+    await markAllRead()
     notifications.value.forEach(n => n.is_read = true)
     ElMessage.success('已全部标为已读')
   } catch (error) {

@@ -1,0 +1,483 @@
+{
+  "data": [
+    {
+      "id": "page-a-login",
+      "title": "登录页 · 现代简约",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/a-login.html",
+        "interactions": [
+          {
+            "domId": "btn-login",
+            "targetPageId": "page-a-dashboard",
+            "transitionLabel": "登录进入系统"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-a-dashboard",
+      "title": "仪表盘 · 现代简约",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 620,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/a-dashboard.html",
+        "interactions": [
+          {
+            "domId": "nav-logs",
+            "targetPageId": "page-a-logs",
+            "transitionLabel": "打开日志管理"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-a-logs",
+      "title": "日志管理 · 现代简约",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1240,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/a-logs.html",
+        "interactions": [
+          {
+            "domId": "row-log-1",
+            "targetPageId": "page-a-log-detail",
+            "transitionLabel": "查看日志详情"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-a-log-detail",
+      "title": "日志详情 · 现代简约",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1860,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/a-log-detail.html",
+        "interactions": [
+          {
+            "domId": "btn-new-log",
+            "targetPageId": "page-a-log-form",
+            "transitionLabel": "新建日志"
+          },
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-a-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-a-log-form",
+      "title": "新建日志 · 现代简约",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 2480,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/a-log-form.html",
+        "interactions": [
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-a-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          },
+          {
+            "domId": "btn-submit",
+            "targetPageId": "page-a-log-detail",
+            "hideEdge": true,
+            "transitionLabel": "提交后查看详情"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-b-login",
+      "title": "登录页 · 科技未来",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 0,
+        "y": 377,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/b-login.html",
+        "interactions": [
+          {
+            "domId": "btn-login",
+            "targetPageId": "page-b-dashboard",
+            "transitionLabel": "登录进入系统"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-b-dashboard",
+      "title": "仪表盘 · 科技未来",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 620,
+        "y": 377,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/b-dashboard.html",
+        "interactions": [
+          {
+            "domId": "nav-logs",
+            "targetPageId": "page-b-logs",
+            "transitionLabel": "打开日志管理"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-b-logs",
+      "title": "日志管理 · 科技未来",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1240,
+        "y": 377,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/b-logs.html",
+        "interactions": [
+          {
+            "domId": "row-log-1",
+            "targetPageId": "page-b-log-detail",
+            "transitionLabel": "查看日志详情"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-b-log-detail",
+      "title": "日志详情 · 科技未来",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1860,
+        "y": 377,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/b-log-detail.html",
+        "interactions": [
+          {
+            "domId": "btn-new-log",
+            "targetPageId": "page-b-log-form",
+            "transitionLabel": "新建日志"
+          },
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-b-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-b-log-form",
+      "title": "新建日志 · 科技未来",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 2480,
+        "y": 377,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/b-log-form.html",
+        "interactions": [
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-b-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-c-login",
+      "title": "登录页 · 复古怀旧",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 0,
+        "y": 754,
+        "group": 2
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/c-login.html",
+        "interactions": [
+          {
+            "domId": "btn-login",
+            "targetPageId": "page-c-dashboard",
+            "transitionLabel": "登录进入系统"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-c-dashboard",
+      "title": "仪表盘 · 复古怀旧",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 620,
+        "y": 754,
+        "group": 2
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/c-dashboard.html",
+        "interactions": [
+          {
+            "domId": "nav-logs",
+            "targetPageId": "page-c-logs",
+            "transitionLabel": "打开日志管理"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-c-logs",
+      "title": "日志管理 · 复古怀旧",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1240,
+        "y": 754,
+        "group": 2
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/c-logs.html",
+        "interactions": [
+          {
+            "domId": "row-log-1",
+            "targetPageId": "page-c-log-detail",
+            "transitionLabel": "查看日志详情"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-c-log-detail",
+      "title": "日志详情 · 复古怀旧",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1860,
+        "y": 754,
+        "group": 2
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/c-log-detail.html",
+        "interactions": [
+          {
+            "domId": "btn-new-log",
+            "targetPageId": "page-c-log-form",
+            "transitionLabel": "新建日志"
+          },
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-c-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-c-log-form",
+      "title": "新建日志 · 复古怀旧",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 2480,
+        "y": 754,
+        "group": 2
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/c-log-form.html",
+        "interactions": [
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-c-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-d-login",
+      "title": "登录页 · 清新自然",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 0,
+        "y": 1131,
+        "group": 3
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/d-login.html",
+        "interactions": [
+          {
+            "domId": "btn-login",
+            "targetPageId": "page-d-dashboard",
+            "transitionLabel": "登录进入系统"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-d-dashboard",
+      "title": "仪表盘 · 清新自然",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 620,
+        "y": 1131,
+        "group": 3
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/d-dashboard.html",
+        "interactions": [
+          {
+            "domId": "nav-logs",
+            "targetPageId": "page-d-logs",
+            "transitionLabel": "打开日志管理"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-d-logs",
+      "title": "日志管理 · 清新自然",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1240,
+        "y": 1131,
+        "group": 3
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/d-logs.html",
+        "interactions": [
+          {
+            "domId": "row-log-1",
+            "targetPageId": "page-d-log-detail",
+            "transitionLabel": "查看日志详情"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-d-log-detail",
+      "title": "日志详情 · 清新自然",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 1860,
+        "y": 1131,
+        "group": 3
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/d-log-detail.html",
+        "interactions": [
+          {
+            "domId": "btn-new-log",
+            "targetPageId": "page-d-log-form",
+            "transitionLabel": "新建日志"
+          },
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-d-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-d-log-form",
+      "title": "新建日志 · 清新自然",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752883200000,
+      "canvasData": {
+        "x": 2480,
+        "y": 1131,
+        "group": 3
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/d-log-form.html",
+        "interactions": [
+          {
+            "domId": "btn-back",
+            "targetPageId": "page-d-logs",
+            "hideEdge": true,
+            "transitionLabel": "返回列表"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "设备管理界面方案设计"
+  }
+}

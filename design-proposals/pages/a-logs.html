@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志管理 · 现代简约</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 A · 现代简约风 (Modern Minimal)
+   设计理念：克制、理性、留白；单一品牌主色 + 中性灰阶；
+   细线分隔、无阴影静态卡片、紧凑理性的信息层级。
+   适合：注重效率与信息密度的企业内网后台。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：石板蓝（单一色相，仅明度阶）—— */
+  --primary-50:  #EFF6FF;
+  --primary-100: #DBEAFE;
+  --primary-500: #3B82F6;
+  --primary-600: #2563EB;
+  --primary-700: #1D4ED8;
+
+  /* —— 中性灰阶 —— */
+  --gray-50:  #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-900: #0F172A;
+
+  /* —— 语义别名（prefixless，供 fill-html-head 映射）—— */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #2563EB;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #334155;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #EFF6FF;
+  --accent-foreground: #1D4ED8;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #2563EB;
+
+  /* —— 圆角：克制偏小 —— */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* —— 状态色 —— */
+  --state-success: #16A34A;
+  --state-warning: #D97706;
+  --state-error:   #DC2626;
+  --state-info:    #2563EB;
+
+  /* —— 图表色（主色阶 + 中性）—— */
+  --chart-1: #2563EB;
+  --chart-2: #60A5FA;
+  --chart-3: #93C5FD;
+  --chart-4: #64748B;
+  --chart-5: #CBD5E1;
+
+  /* —— 字体 —— */
+  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 阴影：静态卡片不投影，仅浮层使用 —— */
+  --shadow-card: none;
+  --shadow-popover: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-drawer: -8px 0 24px rgba(15, 23, 42, 0.10);
+
+  /* —— 间距与密度 —— */
+  --space-page: 24px;
+  --space-card: 20px;
+  --density: 3;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  letter-spacing: -0.005em;
+}
+
+/* 简约风：细线分隔的卡片，无投影 */
+.card-minimal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* 等宽数字用于 KPI */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main data-viewport-mode="app-shell" class="h-screen overflow-hidden min-h-0 flex bg-background text-foreground">
+      <style>
+        :root{--type-cyan:#0891B2;--type-purple:#7C3AED;--type-amber:#CA8A04;}
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;line-height:1.5;white-space:nowrap;}
+        .badge i{width:12px;height:12px;flex-shrink:0;}
+        .badge-install{background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary);}
+        .badge-repair{background:color-mix(in srgb,var(--state-warning) 14%,transparent);color:var(--state-warning);}
+        .badge-scrap{background:var(--muted);color:var(--muted-foreground);}
+        .badge-inspect{background:color-mix(in srgb,var(--type-cyan) 12%,transparent);color:var(--type-cyan);}
+        .badge-maintain{background:color-mix(in srgb,var(--state-success) 12%,transparent);color:var(--state-success);}
+        .badge-fault{background:color-mix(in srgb,var(--state-error) 12%,transparent);color:var(--state-error);}
+        .badge-parts{background:color-mix(in srgb,var(--type-purple) 12%,transparent);color:var(--type-purple);}
+        .badge-calibrate{background:color-mix(in srgb,var(--type-amber) 14%,transparent);color:var(--type-amber);}
+        .badge-warning{background:color-mix(in srgb,var(--state-warning) 12%,transparent);color:var(--state-warning);}
+        .badge-success{background:color-mix(in srgb,var(--state-success) 12%,transparent);color:var(--state-success);}
+        .badge-error{background:color-mix(in srgb,var(--state-error) 12%,transparent);color:var(--state-error);}
+        .badge-neutral{background:var(--muted);color:var(--muted-foreground);}
+        .log-table thead tr{background:var(--gray-50);}
+        .log-table tbody tr{border-top:1px solid var(--gray-100);}
+        .log-table tbody td{padding-top:14px;padding-bottom:14px;}
+        .log-row{cursor:pointer;}
+        .log-row:hover{background:var(--muted);}
+        .row-selected{background:var(--accent);box-shadow:inset 2px 0 0 0 var(--primary);}
+        .row-selected:hover{background:color-mix(in srgb,var(--accent) 70%,var(--primary-100));}
+        .btn-pass:hover{background:color-mix(in srgb,var(--state-success) 10%,transparent);}
+        .btn-reject:hover{background:color-mix(in srgb,var(--state-error) 10%,transparent);}
+        .btn-delete:hover{background:color-mix(in srgb,var(--state-error) 10%,transparent);color:var(--state-error);}
+        .icon-btn:hover{background:var(--accent);color:var(--primary);}
+        @keyframes skeleton-pulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+        .skeleton{animation:skeleton-pulse 1.5s ease-in-out infinite;background:var(--muted);border-radius:var(--radius-sm);}
+        .divide-soft > * + *{border-top:1px solid var(--gray-100);}
+        @media (prefers-reduced-motion:reduce){.skeleton{animation:none;}}
+      </style>
+      <!-- 侧栏 -->
+      <aside class="w-60 shrink-0 border-r border-border bg-card flex flex-col">
+        <div class="h-14 flex items-center gap-2.5 px-4 border-b border-border">
+          <div class="w-8 h-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center">
+            <i data-lucide="activity" class="w-4 h-4"></i>
+          </div>
+          <div class="leading-tight min-w-0">
+            <div class="text-[13px] font-semibold text-foreground truncate">设备信息动态</div>
+            <div class="text-[11px] text-muted-foreground truncate">管理系统</div>
+          </div>
+        </div>
+        <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i><span>仪表盘</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="server" class="w-4 h-4 shrink-0"></i><span>设备管理</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm bg-accent text-accent-foreground font-medium">
+            <i data-lucide="clipboard-list" class="w-4 h-4 shrink-0"></i><span>日志管理</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0"></i><span>统计分析</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="upload" class="w-4 h-4 shrink-0"></i><span>批量上传</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="bell" class="w-4 h-4 shrink-0"></i><span>通知中心</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="settings" class="w-4 h-4 shrink-0"></i><span>系统设置</span>
+          </a>
+        </nav>
+        <div class="p-3 border-t border-border">
+          <div class="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-muted cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xs font-semibold">张</div>
+            <div class="leading-tight min-w-0 flex-1">
+              <div class="text-sm font-medium text-foreground truncate">张工</div>
+              <div class="text-[11px] text-muted-foreground truncate">现场工程师</div>
+            </div>
+            <i data-lucide="chevrons-up-down" class="w-4 h-4 text-muted-foreground shrink-0"></i>
+          </div>
+        </div>
+      </aside>
+      <!-- 主区 -->
+      <div class="flex-1 min-w-0 flex flex-col">
+        <header class="h-14 shrink-0 border-b border-border bg-card flex items-center gap-3 px-4">
+          <button class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground" title="折叠侧栏">
+            <i data-lucide="panel-left" class="w-4 h-4"></i>
+          </button>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">设备管理</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-muted-foreground"></i>
+            <span class="text-foreground font-medium">日志管理</span>
+          </div>
+          <div class="ml-auto flex items-center gap-2">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+              <input type="text" placeholder="搜索设备、日志编号" class="h-9 w-56 pl-8 pr-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring">
+            </div>
+            <button class="h-9 px-3 text-sm bg-primary text-primary-foreground rounded-md flex items-center gap-1.5 hover:opacity-90">
+              <i data-lucide="plus" class="w-4 h-4"></i><span>新建日志</span>
+            </button>
+            <button class="h-9 px-3 text-sm border border-border rounded-md bg-card flex items-center gap-1.5 hover:bg-muted text-foreground">
+              <i data-lucide="upload" class="w-4 h-4"></i><span>批量上传</span>
+            </button>
+            <div class="w-px h-6 bg-border"></div>
+            <button class="w-9 h-9 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xs font-semibold" title="张工">张</button>
+          </div>
+        </header>
+        <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto">
+          <div class="p-6 space-y-4">
+            <!-- 页头 + 视图切换 -->
+            <div class="flex items-center justify-between">
+              <div>
+                <h1 class="text-xl font-semibold">日志管理</h1>
+                <p class="text-sm text-muted-foreground mt-0.5">共 <span class="numeric text-foreground font-medium">87</span> 条日志记录 · 已筛选 <span class="numeric text-foreground font-medium">8</span> 条</p>
+              </div>
+              <div class="inline-flex items-center rounded-md border border-border bg-card p-0.5">
+                <button class="h-7 px-2.5 text-xs rounded bg-primary text-primary-foreground flex items-center gap-1.5 font-medium">
+                  <i data-lucide="list" class="w-3.5 h-3.5"></i><span>列表</span>
+                </button>
+                <button class="h-7 px-2.5 text-xs rounded text-muted-foreground flex items-center gap-1.5 hover:bg-muted">
+                  <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i><span>卡片</span>
+                </button>
+              </div>
+            </div>
+            <!-- 统计概览条 -->
+            <div class="card-minimal grid grid-cols-2 md:grid-cols-4 divide-x divide-border">
+              <div class="px-5 py-3.5">
+                <div class="text-xs text-muted-foreground flex items-center gap-1.5"><i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>今日新增</div>
+                <div class="mt-1 flex items-baseline gap-1.5">
+                  <span class="numeric text-2xl font-semibold text-foreground">12</span>
+                  <span class="text-xs flex items-center gap-0.5" style="color:var(--state-success);"><i data-lucide="trending-up" class="w-3 h-3"></i>+3</span>
+                </div>
+              </div>
+              <div class="px-5 py-3.5">
+                <div class="text-xs text-muted-foreground flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i>待审核</div>
+                <div class="mt-1 flex items-baseline gap-1.5">
+                  <span class="numeric text-2xl font-semibold text-foreground">5</span>
+                  <span class="text-xs text-muted-foreground">条</span>
+                </div>
+              </div>
+              <div class="px-5 py-3.5">
+                <div class="text-xs text-muted-foreground flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>本周故障</div>
+                <div class="mt-1 flex items-baseline gap-1.5">
+                  <span class="numeric text-2xl font-semibold text-foreground">3</span>
+                  <span class="text-xs flex items-center gap-0.5" style="color:var(--state-error);"><i data-lucide="trending-down" class="w-3 h-3"></i>-1</span>
+                </div>
+              </div>
+              <div class="px-5 py-3.5">
+                <div class="text-xs text-muted-foreground flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>已通过</div>
+                <div class="mt-1 flex items-baseline gap-1.5">
+                  <span class="numeric text-2xl font-semibold text-foreground">64</span>
+                  <span class="text-xs text-muted-foreground">条</span>
+                </div>
+              </div>
+            </div>
+            <!-- 筛选区 -->
+            <div class="card-minimal p-4">
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="flex flex-col">
+                  <label class="text-xs text-muted-foreground mb-1">日志类型</label>
+                  <select class="h-9 pl-3 pr-8 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring min-w-[132px]">
+                    <option>全部类型</option>
+                    <option>安装</option><option>维修</option><option>报废</option><option>巡检</option>
+                    <option>保养</option><option>故障</option><option>配件</option><option>校准</option>
+                  </select>
+                </div>
+                <div class="flex flex-col">
+                  <label class="text-xs text-muted-foreground mb-1">状态</label>
+                  <select class="h-9 pl-3 pr-8 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring min-w-[120px]">
+                    <option>全部状态</option><option>待审核</option><option>已通过</option><option>已驳回</option>
+                  </select>
+                </div>
+                <div class="flex flex-col">
+                  <label class="text-xs text-muted-foreground mb-1">时间范围</label>
+                  <select class="h-9 pl-3 pr-8 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring min-w-[120px]">
+                    <option>今日</option><option selected>本周</option><option>本月</option><option>自定义</option>
+                  </select>
+                </div>
+                <div class="flex flex-col">
+                  <label class="text-xs text-muted-foreground mb-1">设备关键词</label>
+                  <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+                    <input type="text" placeholder="设备名称 / 编号" class="h-9 pl-8 pr-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring w-48">
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="h-9 px-4 text-sm bg-primary text-primary-foreground rounded-md flex items-center gap-1.5 hover:opacity-90">
+                    <i data-lucide="search" class="w-4 h-4"></i><span>查询</span>
+                  </button>
+                  <button class="h-9 px-3 text-sm text-primary hover:bg-accent rounded-md flex items-center gap-1">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i><span>清除筛选</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- 批量操作栏（选中后浮出） -->
+            <div class="card-minimal px-4 py-2.5 flex items-center gap-3" style="box-shadow:inset 2px 0 0 0 var(--primary);">
+              <div class="flex items-center gap-2 text-sm">
+                <i data-lucide="check-check" class="w-4 h-4 text-primary"></i>
+                <span class="text-foreground">已选择 <span class="numeric font-semibold text-primary">2</span> 项</span>
+              </div>
+              <div class="w-px h-5 bg-border"></div>
+              <div class="flex items-center gap-1.5">
+                <button class="btn-pass h-7 px-2.5 text-xs rounded-md flex items-center gap-1" style="color:var(--state-success);">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i><span>批量通过</span>
+                </button>
+                <button class="btn-reject h-7 px-2.5 text-xs rounded-md flex items-center gap-1" style="color:var(--state-error);">
+                  <i data-lucide="x" class="w-3.5 h-3.5"></i><span>批量驳回</span>
+                </button>
+                <button class="h-7 px-2.5 text-xs rounded-md text-foreground hover:bg-muted flex items-center gap-1">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i><span>批量导出</span>
+                </button>
+              </div>
+              <button class="ml-auto h-7 px-2.5 text-xs rounded-md text-muted-foreground hover:bg-muted flex items-center gap-1">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i><span>取消选择</span>
+              </button>
+            </div>
+            <!-- 表格 -->
+            <div class="card-minimal overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="log-table w-full text-sm">
+                  <thead>
+                    <tr>
+                      <th class="w-10 px-4 py-3"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground">日志编号</th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground">日志类型</th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground">设备名称</th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground">设备编号</th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground">提交人</th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground cursor-pointer select-none">
+                        <span class="inline-flex items-center gap-1 hover:text-foreground">提交时间<i data-lucide="arrow-down" class="w-3 h-3" style="color:var(--primary);"></i></span>
+                      </th>
+                      <th class="text-left font-medium px-4 py-3 text-muted-foreground cursor-pointer select-none">
+                        <span class="inline-flex items-center gap-1 hover:text-foreground">状态<i data-lucide="chevrons-up-down" class="w-3 h-3 text-muted-foreground"></i></span>
+                      </th>
+                      <th class="text-right font-medium px-4 py-3 text-muted-foreground">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- 行1：维修 · 待审核 · 选中态 · 可点击进入详情 -->
+                    <tr data-dom-id="row-log-1" class="log-row row-selected">
+                      <td class="px-4"><input type="checkbox" checked class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0718-01</td>
+                      <td class="px-4"><span class="badge badge-repair"><i data-lucide="wrench"></i>维修</span></td>
+                      <td class="px-4 text-foreground">空压机A-12</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2024-0012</td>
+                      <td class="px-4 text-foreground">张工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-18 09:24</td>
+                      <td class="px-4"><span class="badge badge-warning">待审核</span></td>
+                      <td class="px-4 text-right">
+                        <div class="relative inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                          <!-- 删除确认浮层 -->
+                          <div class="absolute right-0 top-9 z-20 w-52 card-minimal p-2.5" style="box-shadow:var(--shadow-popover);">
+                            <div class="flex items-start gap-2 mb-2">
+                              <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 shrink-0" style="color:var(--state-error);"></i>
+                              <div class="text-xs text-foreground leading-relaxed">确定删除日志 <span class="font-mono font-medium">LOG-0718-01</span>？删除后不可恢复。</div>
+                            </div>
+                            <div class="flex items-center justify-end gap-1.5">
+                              <button class="h-6 px-2 text-xs border border-border rounded text-muted-foreground hover:bg-muted">取消</button>
+                              <button class="h-6 px-2 text-xs rounded text-destructive-foreground" style="background:var(--destructive);">删除</button>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行2：故障 · 待审核 · 选中态 -->
+                    <tr class="log-row row-selected">
+                      <td class="px-4"><input type="checkbox" checked class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0717-02</td>
+                      <td class="px-4"><span class="badge badge-fault"><i data-lucide="alert-triangle"></i>故障</span></td>
+                      <td class="px-4 text-foreground">输送带C-03</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2024-0047</td>
+                      <td class="px-4 text-foreground">王工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-17 10:55</td>
+                      <td class="px-4"><span class="badge badge-warning">待审核</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行3：保养 · 已通过 -->
+                    <tr class="log-row">
+                      <td class="px-4"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0716-03</td>
+                      <td class="px-4"><span class="badge badge-maintain"><i data-lucide="sparkles"></i>保养</span></td>
+                      <td class="px-4 text-foreground">包装机B-07</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2024-0029</td>
+                      <td class="px-4 text-foreground">周工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-16 16:00</td>
+                      <td class="px-4"><span class="badge badge-success">已通过</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行4：巡检 · 已通过 -->
+                    <tr class="log-row">
+                      <td class="px-4"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0716-01</td>
+                      <td class="px-4"><span class="badge badge-inspect"><i data-lucide="clipboard-check"></i>巡检</span></td>
+                      <td class="px-4 text-foreground">锅炉D-01</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2023-0102</td>
+                      <td class="px-4 text-foreground">李工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-16 14:30</td>
+                      <td class="px-4"><span class="badge badge-success">已通过</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行5：安装 · 已通过 -->
+                    <tr class="log-row">
+                      <td class="px-4"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0715-02</td>
+                      <td class="px-4"><span class="badge badge-install"><i data-lucide="hammer"></i>安装</span></td>
+                      <td class="px-4 text-foreground">机械手E-09</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2024-0061</td>
+                      <td class="px-4 text-foreground">赵工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-15 11:20</td>
+                      <td class="px-4"><span class="badge badge-success">已通过</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行6：报废 · 已驳回 -->
+                    <tr class="log-row">
+                      <td class="px-4"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0715-01</td>
+                      <td class="px-4"><span class="badge badge-scrap"><i data-lucide="archive"></i>报废</span></td>
+                      <td class="px-4 text-foreground">老旧电机F-02</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2022-0188</td>
+                      <td class="px-4 text-foreground">孙工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-15 09:00</td>
+                      <td class="px-4"><span class="badge badge-error">已驳回</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行7：配件 · 待审核 -->
+                    <tr class="log-row">
+                      <td class="px-4"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0714-03</td>
+                      <td class="px-4"><span class="badge badge-parts"><i data-lucide="package"></i>配件</span></td>
+                      <td class="px-4 text-foreground">注塑机G-04</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2024-0075</td>
+                      <td class="px-4 text-foreground">张工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-14 15:45</td>
+                      <td class="px-4"><span class="badge badge-warning">待审核</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- 行8：校准 · 已通过 -->
+                    <tr class="log-row">
+                      <td class="px-4"><input type="checkbox" class="w-4 h-4 rounded border-input" style="accent-color:var(--primary);"></td>
+                      <td class="px-4 font-mono text-xs text-foreground">LOG-0714-02</td>
+                      <td class="px-4"><span class="badge badge-calibrate"><i data-lucide="gauge"></i>校准</span></td>
+                      <td class="px-4 text-foreground">检测仪H-01</td>
+                      <td class="px-4 font-mono text-xs text-muted-foreground">EQ-2023-0099</td>
+                      <td class="px-4 text-foreground">周工</td>
+                      <td class="px-4 text-muted-foreground numeric">07-14 10:10</td>
+                      <td class="px-4"><span class="badge badge-success">已通过</span></td>
+                      <td class="px-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="查看"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                          <button class="icon-btn w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                          <button class="btn-delete w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground" title="删除（需二次确认）"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- 分页 -->
+              <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-border text-sm">
+                <div class="flex items-center gap-3 text-muted-foreground">
+                  <span>共 <span class="numeric text-foreground font-medium">87</span> 条 · 显示 <span class="numeric text-foreground">1-10</span></span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs">每页</span>
+                    <select class="h-7 px-2 text-xs border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring">
+                      <option>10</option><option>20</option><option>50</option>
+                    </select>
+                    <span class="text-xs">条</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button class="h-8 w-8 flex items-center justify-center border border-border rounded-md hover:bg-muted text-muted-foreground" title="上一页"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                  <button class="h-8 w-8 flex items-center justify-center bg-primary text-primary-foreground rounded-md text-xs font-medium">1</button>
+                  <button class="h-8 w-8 flex items-center justify-center border border-border rounded-md hover:bg-muted text-xs">2</button>
+                  <button class="h-8 w-8 flex items-center justify-center border border-border rounded-md hover:bg-muted text-xs">3</button>
+                  <button class="h-8 w-8 flex items-center justify-center border border-border rounded-md hover:bg-muted text-xs">4</button>
+                  <span class="text-muted-foreground text-xs px-1">…</span>
+                  <button class="h-8 w-8 flex items-center justify-center border border-border rounded-md hover:bg-muted text-xs">9</button>
+                  <button class="h-8 w-8 flex items-center justify-center border border-border rounded-md hover:bg-muted text-muted-foreground" title="下一页"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+              </div>
+            </div>
+            <!-- 状态预览：空状态 + 加载骨架屏 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <!-- 空状态 -->
+              <div class="card-minimal p-10 flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                  <i data-lucide="inbox" class="w-8 h-8 text-muted-foreground"></i>
+                </div>
+                <h3 class="text-sm font-medium text-foreground">暂无日志记录</h3>
+                <p class="text-xs text-muted-foreground mt-1 mb-4 max-w-xs">当前筛选条件下没有匹配的日志，可尝试调整筛选或新建一条日志</p>
+                <button class="h-8 px-3 text-sm bg-primary text-primary-foreground rounded-md flex items-center gap-1.5 hover:opacity-90">
+                  <i data-lucide="plus" class="w-4 h-4"></i><span>新建日志</span>
+                </button>
+              </div>
+              <!-- 加载骨架屏 -->
+              <div class="card-minimal overflow-hidden">
+                <div class="px-4 py-3 border-b" style="border-color:var(--gray-100);background:var(--gray-50);">
+                  <div class="flex items-center gap-4">
+                    <div class="skeleton h-4 w-4 rounded"></div>
+                    <div class="skeleton h-3 w-24"></div>
+                    <div class="skeleton h-3 w-16"></div>
+                    <div class="skeleton h-3 w-20 ml-auto"></div>
+                  </div>
+                </div>
+                <div class="divide-soft">
+                  <div class="px-4 flex items-center gap-4" style="padding-top:14px;padding-bottom:14px;">
+                    <div class="skeleton h-4 w-4 rounded"></div>
+                    <div class="skeleton h-3 w-24"></div>
+                    <div class="skeleton h-5 w-14 rounded-full"></div>
+                    <div class="skeleton h-3 flex-1 max-w-[140px]"></div>
+                    <div class="skeleton h-5 w-16 rounded-full ml-auto"></div>
+                  </div>
+                  <div class="px-4 flex items-center gap-4" style="padding-top:14px;padding-bottom:14px;">
+                    <div class="skeleton h-4 w-4 rounded"></div>
+                    <div class="skeleton h-3 w-24"></div>
+                    <div class="skeleton h-5 w-14 rounded-full"></div>
+                    <div class="skeleton h-3 flex-1 max-w-[120px]"></div>
+                    <div class="skeleton h-5 w-16 rounded-full ml-auto"></div>
+                  </div>
+                  <div class="px-4 flex items-center gap-4" style="padding-top:14px;padding-bottom:14px;">
+                    <div class="skeleton h-4 w-4 rounded"></div>
+                    <div class="skeleton h-3 w-24"></div>
+                    <div class="skeleton h-5 w-14 rounded-full"></div>
+                    <div class="skeleton h-3 flex-1 max-w-[160px]"></div>
+                    <div class="skeleton h-5 w-16 rounded-full ml-auto"></div>
+                  </div>
+                  <div class="px-4 flex items-center gap-4" style="padding-top:14px;padding-bottom:14px;">
+                    <div class="skeleton h-4 w-4 rounded"></div>
+                    <div class="skeleton h-3 w-24"></div>
+                    <div class="skeleton h-5 w-14 rounded-full"></div>
+                    <div class="skeleton h-3 flex-1 max-w-[100px]"></div>
+                    <div class="skeleton h-5 w-16 rounded-full ml-auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

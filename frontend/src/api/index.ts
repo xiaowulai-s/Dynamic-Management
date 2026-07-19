@@ -329,3 +329,28 @@ export const exportCostAnalysis = (data: {
     responseType: 'blob'
   })
 }
+
+// ========== 客户管理 API ==========
+
+export { getCustomers, createCustomer, updateCustomer, deleteCustomer } from './customers'
+
+// ========== 用户反馈 API ==========
+
+export { getFeedbacks, submitFeedback, replyFeedback, markFeedbackRead } from './feedback'
+
+// ========== 审计日志 API ==========
+
+export { getAuditLogs } from './audit'
+
+// ========== 认证与用户管理 API ==========
+
+export {
+  login,
+  register,
+  getCurrentUser,
+  changePassword,
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser
+} from './auth'

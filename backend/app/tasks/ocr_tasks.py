@@ -2,12 +2,19 @@ import os
 import json
 import fitz  # PyMuPDF
 from docx import Document
-import easyocr
 import numpy as np
 from PIL import Image
 from celery import shared_task
 from app.config import settings
 from app.utils.file_utils import get_file_path
+
+# easyocr 为可选依赖，缺失时 celery 仍可正常启动，OCR 任务调用时返回错误
+try:
+    import easyocr
+    _easyocr_available = True
+except ImportError:
+    easyocr = None
+    _easyocr_available = False
 
 
 @shared_task(bind=True, name="ocr_tasks.process_uploaded_files")
@@ -128,6 +135,8 @@ def recognize_pdf(pdf_path: str) -> dict:
                 pix.save(img_path)
 
                 # OCR识别
+                if not _easyocr_available:
+                    raise RuntimeError("easyocr 模块未安装，无法进行 OCR 识别")
                 reader = easyocr.Reader(['ch_sim', 'en'])
                 result = reader.readtext(img_path)
 
@@ -218,7 +227,9 @@ def recognize_image(image_path: str) -> dict:
         dict: 识别结果
     """
     try:
-        # 使用PaddleOCR识别
+        # 使用easyocr识别
+        if not _easyocr_available:
+            return {"success": False, "error": "easyocr 模块未安装，无法进行 OCR 识别"}
         reader = easyocr.Reader(['ch_sim', 'en'])
         result = reader.readtext(image_path)
 

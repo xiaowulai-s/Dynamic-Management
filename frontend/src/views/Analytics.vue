@@ -172,8 +172,10 @@ import {
   getFaultRate, getMaintenanceCost, getMaintenanceSchedule,
   getEquipmentStatus, getLogTypeStats, getRepairRanking,
   getCostAnalysis, getPartsUsage,
-  exportFaultRate, exportMaintenanceCost, exportMaintenanceSchedule,
-  exportPartsUsage, exportRepairRanking, exportCostAnalysis
+  exportFaultRate as exportFaultRateApi, exportMaintenanceCost as exportMaintenanceCostApi,
+  exportMaintenanceSchedule as exportMaintenanceScheduleApi,
+  exportPartsUsage as exportPartsUsageApi, exportRepairRanking as exportRepairRankingApi,
+  exportCostAnalysis as exportCostAnalysisApi
 } from '@/api'
 import { getChartColors } from '@/utils/echarts-theme'
 
@@ -350,15 +352,15 @@ const downloadFile = (response: any, filename: string) => {
 }
 
 const exportRepairRanking = () => {
-  handleExport(exportRepairRanking, { limit: 10 }, '维修频率排名')
+  handleExport(exportRepairRankingApi, { limit: 10 }, '维修频率排名')
 }
 
 const exportMaintenanceSchedule = () => {
-  handleExport(exportMaintenanceSchedule, { days: 30 }, '保养计划_未来30天')
+  handleExport(exportMaintenanceScheduleApi, { days: 30 }, '保养计划_未来30天')
 }
 
 const exportPartsUsage = () => {
-  handleExport(exportPartsUsage, {}, '配件消耗统计')
+  handleExport(exportPartsUsageApi, {}, '配件消耗统计')
 }
 
 onMounted(() => fetchAllData())

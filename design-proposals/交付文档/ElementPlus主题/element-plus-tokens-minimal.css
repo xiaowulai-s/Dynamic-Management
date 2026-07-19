@@ -1,0 +1,112 @@
+/* ============================================================
+   方案 A · 现代简约风 (Modern Minimal) — Element Plus 主题 Tokens
+   适用：Vue3 + Element Plus 工程，在根元素或 :root 引入即可覆盖默认主题。
+   落地方式：import './element-plus-tokens-minimal.css' 置于 App 入口之后。
+   设计理念：克制、理性、留白；单一石板蓝主色 + 中性灰阶。
+   ============================================================ */
+
+:root {
+  /* —— 品牌主色：石板蓝 —— */
+  --el-color-primary: #2563EB;
+  --el-color-primary-light-3: #5B8BF0;
+  --el-color-primary-light-5: #92B4F5;
+  --el-color-primary-light-7: #C0D2F9;
+  --el-color-primary-light-8: #D6E2FB;
+  --el-color-primary-light-9: #EFF6FF;
+  --el-color-primary-dark-2: #1D4ED8;
+
+  /* —— 状态色 —— */
+  --el-color-success: #16A34A;
+  --el-color-success-light-3: #4FC077;
+  --el-color-success-light-5: #84D19F;
+  --el-color-success-light-7: #B8E3C7;
+  --el-color-success-light-8: #D2ECDA;
+  --el-color-success-light-9: #ECF7F0;
+
+  --el-color-warning: #D97706;
+  --el-color-warning-light-3: #E69E43;
+  --el-color-warning-light-5: #EDBB76;
+  --el-color-warning-light-7: #F3D6A8;
+  --el-color-warning-light-8: #F7E4C2;
+  --el-color-warning-light-9: #FBF2E3;
+
+  --el-color-danger: #DC2626;
+  --el-color-danger-light-3: #E85C5C;
+  --el-color-danger-light-5: #ED9393;
+  --el-color-danger-light-7: #F3BDBD;
+  --el-color-danger-light-8: #F6D2D2;
+  --el-color-danger-light-9: #FBEAEA;
+
+  --el-color-error: #DC2626;
+  --el-color-info: #2563EB;
+
+  /* —— 背景 —— */
+  --el-bg-color: #FFFFFF;
+  --el-bg-color-page: #F8FAFC;
+  --el-bg-color-overlay: #FFFFFF;
+
+  /* —— 文本 —— */
+  --el-text-color-primary: #0F172A;
+  --el-text-color-regular: #334155;
+  --el-text-color-secondary: #64748B;
+  --el-text-color-placeholder: #94A3B8;
+  --el-text-color-disabled: #CBD5E1;
+
+  /* —— 边框 —— */
+  --el-border-color: #E2E8F0;
+  --el-border-color-light: #E2E8F0;
+  --el-border-color-lighter: #F1F5F9;
+  --el-border-color-extra-light: #F8FAFC;
+  --el-border-color-dark: #CBD5E1;
+  --el-border-color-darker: #94A3B8;
+
+  /* —— 填充 —— */
+  --el-fill-color: #F1F5F9;
+  --el-fill-color-light: #F8FAFC;
+  --el-fill-color-lighter: #F8FAFC;
+  --el-fill-color-blank: #FFFFFF;
+  --el-fill-color-dark: #E2E8F0;
+
+  /* —— 圆角：克制偏小 —— */
+  --el-border-radius-base: 8px;
+  --el-border-radius-small: 4px;
+  --el-border-radius-round: 12px;
+  --el-border-radius-circle: 100%;
+
+  /* —— 阴影：静态卡片无投影，仅浮层使用 —— */
+  --el-box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --el-box-shadow-light: 0 2px 8px rgba(15, 23, 42, 0.06);
+  --el-box-shadow-lighter: 0 1px 4px rgba(15, 23, 42, 0.04);
+  --el-box-shadow-dark: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+  /* —— 字体 —— */
+  --el-font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --el-font-size-extra-large: 20px;
+  --el-font-size-large: 18px;
+  --el-font-size-medium: 16px;
+  --el-font-size-base: 14px;
+  --el-font-size-small: 13px;
+  --el-font-size-extra-small: 12px;
+
+  /* —— 禁用态 —— */
+  --el-disabled-bg-color: #F8FAFC;
+  --el-disabled-text-color: #CBD5E1;
+  --el-disabled-border-color: #E2E8F0;
+
+  /* —— 分隔线 —— */
+  --el-border-color-split: #E2E8F0;
+}
+
+/* 卡片：细线分隔，无投影（与方案 A 的 .card-minimal 一致） */
+.el-card {
+  border-radius: 8px;
+  box-shadow: none !important;
+  border: 1px solid #E2E8F0;
+}
+
+/* 数字类：等宽，用于 KPI */
+.el-statistic__number,
+.numeric {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}

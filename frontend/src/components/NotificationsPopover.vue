@@ -93,8 +93,8 @@ const fetchNotifications = async () => {
   try {
     const res = await getNotifications({ limit: 10 })
     notifications.value = res.data
-  } catch (error) {
-    console.error('获取通知失败:', error)
+  } catch {
+    // 获取通知失败，静默处理
   }
 }
 
@@ -102,8 +102,8 @@ const fetchUnreadCount = async () => {
   try {
     const res = await getUnreadCount()
     unreadCount.value = res.data.count
-  } catch (error) {
-    console.error('获取未读数量失败:', error)
+  } catch {
+    // 获取未读数量失败，静默处理
   }
 }
 

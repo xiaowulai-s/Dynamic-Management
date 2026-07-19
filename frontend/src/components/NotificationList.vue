@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { Bell, Tools, Warning, Calender, Reading, Document } from '@element-plus/icons-vue'
+import { Bell, Tools, Warning, Calendar, Reading, Document } from '@element-plus/icons-vue'
 
 interface Notification {
   id: number
@@ -94,7 +94,7 @@ const getTypeIcon = (type?: string) => {
   const icons: Record<string, any> = {
     maintenance: Tools,
     lifecycle: Warning,
-    calibration: Calender,
+    calibration: Calendar,
     system: Reading
   }
   return icons[type || ''] || Bell

@@ -197,3 +197,45 @@
 
 **最后更新**: 2026-07-13 17:00  
 **下次更新**: Phase 3完成后
+
+---
+
+### Phase 4: 全面重构阶段一 (2/2 完成) ✅ 2026-07-18
+
+| 编号 | 文件位置 | 问题描述 | 修复方案 | 状态 |
+|------|----------|----------|----------|------|
+| **CR-1** | `frontend/src/views/LogDetail.vue:248,344` | 调用不存在的rejectLog函数 | 改为调用approveLog(id, false, reason) | ✅ 已修复 |
+| **CR-2** | `frontend/src/views/Analytics.vue:352-361` | 导出函数无限递归调用自身 | 导入真实API函数并调用 | ✅ 已修复 |
+
+**问题详情**:
+
+**CR-1: rejectLog函数不存在**
+- 问题: 导入了不存在的 `rejectLog` 函数
+- 影响: 管理员驳回日志时直接崩溃
+- 修复: 后端只有 `POST /logs/{id}/approve` 接口，通过 `approved` 参数区分通过/驳回
+- 修改: 
+  - 删除 `rejectLog` 导入
+  - `await rejectLog(id, { rejection_reason })` → `await approveLog(id, false, rejection_reason)`
+
+**CR-2: 导出函数无限递归**
+- 问题: `exportRepairRanking()` 调用 `handleExport(exportRepairRanking, ...)` 导致递归
+- 影响: 点击导出按钮浏览器崩溃
+- 修复: 导入API函数时重命名，避免与本地函数冲突
+- 修改:
+  - `import { exportRepairRanking as exportRepairRankingApi }`
+  - `handleExport(exportRepairRankingApi, ...)`
+
+**验证结果**: ✅ 两个严重bug已修复，代码逻辑正确
+
+**总计**: 2个严重bug全部修复
+
+---
+
+## 📊 修复统计更新
+
+**总修复数**: 16个 (14 + 2)
+**严重Bug**: 11个 (9 + 2)
+**高风险Bug**: 5个
+**待修复**: 19个
+
+**修复进度**: 45.7% (16/35)

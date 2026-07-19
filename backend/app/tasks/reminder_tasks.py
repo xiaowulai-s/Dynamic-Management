@@ -1,5 +1,5 @@
 from celery import shared_task
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.logs import MaintenanceRecord, CalibrationLog, Log
@@ -9,6 +9,9 @@ from app.models.notification import Notification
 from app.routers.notifications import create_notification_sync
 from app.config import settings
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task(name="reminder_tasks.check_maintenance_reminder")
@@ -19,7 +22,7 @@ def check_maintenance_reminder():
     """
     db = SessionLocal()
     try:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # 获取保养周期配置
         config = db.query(SystemConfig).filter(
@@ -30,7 +33,6 @@ def check_maintenance_reminder():
             return {"message": "未找到保养周期配置"}
 
         maintenance_cycle_config = config.config_value
-        default_cycle = maintenance_cycle_config.get("default", 30)
 
         # 查询即将到期的保养记录
         upcoming_maintenance = db.query(MaintenanceRecord).join(Log).filter(
@@ -42,6 +44,8 @@ def check_maintenance_reminder():
         reminders = []
         for maintenance in upcoming_maintenance:
             log = db.query(Log).filter(Log.id == maintenance.id).first()
+            if log is None:
+                continue
             equipment = db.query(Equipment).filter(Equipment.id == log.equipment_id).first()
 
             if equipment:
@@ -61,13 +65,13 @@ def check_maintenance_reminder():
                     create_notification_sync(
                         user_id=log.operator_id,
                         title=f"设备保养提醒：{equipment.name}",
-                        content=f"设备 {equipment.name}（编号：{equipment.code}）将在 {days_remaining} 天后需要保养。\n下次保养日期：{maintenance.next_maintenance_date.strftime('%Y-%m-%d')}\n保养项目：{', '.join(maintenance.maintenance_items) if maintenance.maintenance_items else '常规保养'}",
+                        content=f"设备 {equipment.name}（编号：{equipment.code}）将在 {days_remaining} 天后需要保养。\n下次保养日期：{maintenance.next_maintenance_date.strftime('%Y-%m-%d')}\n保养项目：{', '.join(maintenance.maintenance_items or []) if maintenance.maintenance_items else '常规保养'}",
                         db=db,
                         type="maintenance",
                         equipment_id=equipment.id
                     )
-                except Exception as e:
-                    print(f"发送保养提醒通知失败: {str(e)}")
+                except Exception:
+                    logger.exception("发送保养提醒通知失败")
 
         return {
             "check_time": now.isoformat(),
@@ -75,6 +79,9 @@ def check_maintenance_reminder():
             "total": len(reminders)
         }
 
+    except Exception:
+        logger.exception("检查保养提醒任务执行失败")
+        raise
     finally:
         db.close()
 
@@ -87,7 +94,7 @@ def check_equipment_life():
     """
     db = SessionLocal()
     try:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # 获取设备寿命配置
         config = db.query(SystemConfig).filter(
@@ -147,8 +154,8 @@ def check_equipment_life():
                             type="lifecycle",
                             equipment_id=equipment.id
                         )
-                    except Exception as e:
-                        print(f"发送寿命预警通知失败: {str(e)}")
+                    except Exception:
+                        logger.exception("发送寿命预警通知失败")
 
         return {
             "check_time": now.isoformat(),
@@ -156,6 +163,9 @@ def check_equipment_life():
             "total": len(warnings)
         }
 
+    except Exception:
+        logger.exception("检查设备寿命任务执行失败")
+        raise
     finally:
         db.close()
 
@@ -168,7 +178,7 @@ def check_calibration_reminder():
     """
     db = SessionLocal()
     try:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # 查询即将到期的校准记录
         upcoming_calibrations = db.query(CalibrationLog).join(Log).filter(
@@ -204,8 +214,8 @@ def check_calibration_reminder():
                         type="calibration",
                         equipment_id=equipment.id
                     )
-                except Exception as e:
-                    print(f"发送校准提醒通知失败: {str(e)}")
+                except Exception:
+                    logger.exception("发送校准提醒通知失败")
 
         return {
             "check_time": now.isoformat(),
@@ -213,6 +223,9 @@ def check_calibration_reminder():
             "total": len(reminders)
         }
 
+    except Exception:
+        logger.exception("检查校准提醒任务执行失败")
+        raise
     finally:
         db.close()
 
@@ -232,23 +245,22 @@ def cleanup_temp_files():
             return {"message": "临时目录不存在"}
 
         # 查找7天前的临时文件
-        cutoff_date = datetime.now() - timedelta(days=7)
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=7)
         deleted_count = 0
 
         for file_path in glob.glob(os.path.join(temp_dir, "*")):
             file_stat = os.stat(file_path)
-            file_mtime = datetime.fromtimestamp(file_stat.st_mtime)
+            file_mtime = datetime.fromtimestamp(file_stat.st_mtime, tz=timezone.utc)
 
             if file_mtime < cutoff_date:
                 os.remove(file_path)
                 deleted_count += 1
 
         return {
-            "cleanup_time": datetime.utcnow().isoformat(),
+            "cleanup_time": datetime.now(timezone.utc).isoformat(),
             "deleted_count": deleted_count
         }
 
-    except Exception as e:
-        return {
-            "error": str(e)
-        }
+    except Exception:
+        logger.exception("清理临时文件任务执行失败")
+        raise

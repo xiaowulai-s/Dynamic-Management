@@ -69,6 +69,8 @@
 - Docker + Docker Compose
 - PostgreSQL + Redis 独立容器
 
+**迁移到其他服务器**：参考 [迁移部署指南](docs/迁移部署指南.md)，使用 `迁移-导出.ps1` / `迁移-导入.ps1` 一键迁移全量数据。
+
 ## 快速开始
 
 ```bash

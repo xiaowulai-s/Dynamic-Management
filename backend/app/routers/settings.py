@@ -12,6 +12,26 @@ from pydantic import BaseModel
 router = APIRouter()
 
 
+class SiteTitleResponse(BaseModel):
+    """站点标题（公开接口，无需认证，供登录页使用）"""
+    site_title_zh: str = "设备信息动态管理系统"
+    site_title_en: str = "Equipment Management"
+
+
+@router.get("/site-title", response_model=SiteTitleResponse, summary="获取站点标题（公开）")
+async def get_site_title(db: Session = Depends(get_db)):
+    """获取系统中英文标题，无需认证，供登录页和侧边栏使用"""
+    result = {"site_title_zh": "设备信息动态管理系统", "site_title_en": "Equipment Management"}
+    configs = db.query(SystemConfig).filter(SystemConfig.config_key.in_(["site_title_zh", "site_title_en"])).all()
+    for c in configs:
+        val = c.config_value
+        # JSON 字符串去引号
+        if isinstance(val, str) and val.startswith('"') and val.endswith('"'):
+            val = val[1:-1]
+        result[c.config_key] = val
+    return result
+
+
 # 审批配置模型
 class ApprovalConfigResponse(BaseModel):
     id: int
@@ -65,7 +85,7 @@ async def update_approval_config(
     db: Session = Depends(get_db)
 ):
     """更新审批配置（仅管理员）"""
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可修改审批配置"
@@ -92,7 +112,7 @@ async def create_approval_config(
     db: Session = Depends(get_db)
 ):
     """创建审批配置（仅管理员）"""
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可创建审批配置"
@@ -156,7 +176,7 @@ async def update_system_config(
     db: Session = Depends(get_db)
 ):
     """更新系统配置（仅管理员）"""
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可修改系统配置"
@@ -191,7 +211,7 @@ async def create_system_config(
     db: Session = Depends(get_db)
 ):
     """创建系统配置（仅管理员）"""
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可创建系统配置"
@@ -228,7 +248,7 @@ async def init_default_configs(
     db: Session = Depends(get_db)
 ):
     """初始化默认系统配置（仅管理员）"""
-    if current_user.role != "admin":
+    if current_user.role not in ("admin", "super_admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="仅管理员可初始化配置"

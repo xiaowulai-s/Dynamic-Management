@@ -31,6 +31,6 @@ export const updateEquipment = (id: number, data: Partial<EquipmentParams>) => {
 }
 
 // 删除设备
-export const deleteEquipment = (id: number) => {
-  return request.delete(`/equipment/${id}`)
+export const deleteEquipment = (id: number, force: boolean = false) => {
+  return request.delete(`/equipment/${id}`, { params: { force } })
 }

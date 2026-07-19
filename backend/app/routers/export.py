@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
 from typing import Optional, List, Dict, Any
-from datetime import datetime, date
+from datetime import datetime, date, timedelta, timezone
 import os
 import uuid
 
@@ -70,8 +70,8 @@ async def export_fault_rate(
     """导出故障率统计报表"""
     try:
         # 查询数据
-        start_date = datetime.strptime(request.start_date, "%Y-%m-%d")
-        end_date = datetime.strptime(request.end_date, "%Y-%m-%d")
+        start_date = datetime.strptime(request.start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        end_date = datetime.strptime(request.end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
 
         # 按设备统计故障次数
         fault_data = db.query(
@@ -120,8 +120,8 @@ async def export_maintenance_cost(
 ):
     """导出维修成本分析报表"""
     try:
-        start_date = datetime.strptime(request.start_date, "%Y-%m-%d")
-        end_date = datetime.strptime(request.end_date, "%Y-%m-%d")
+        start_date = datetime.strptime(request.start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        end_date = datetime.strptime(request.end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
 
         # 按月份统计维修成本
         cost_data = db.query(
@@ -169,8 +169,8 @@ async def export_maintenance_schedule(
 ):
     """导出保养计划报表"""
     try:
-        now = datetime.utcnow()
-        end_date = now + __import__('datetime').timedelta(days=request.days)
+        now = datetime.now(timezone.utc)
+        end_date = now + timedelta(days=request.days)
 
         # 查询即将到期的保养计划
         schedule_data = db.query(
@@ -237,11 +237,11 @@ async def export_parts_usage(
         )
 
         if request.start_date:
-            start_date = datetime.strptime(request.start_date, "%Y-%m-%d")
+            start_date = datetime.strptime(request.start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             query = query.filter(Log.created_at >= start_date)
 
         if request.end_date:
-            end_date = datetime.strptime(request.end_date, "%Y-%m-%d")
+            end_date = datetime.strptime(request.end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             query = query.filter(Log.created_at <= end_date)
 
         parts_data = query.group_by(
@@ -355,11 +355,11 @@ async def export_cost_analysis(
         )
 
         if request.start_date:
-            start_date = datetime.strptime(request.start_date, "%Y-%m-%d")
+            start_date = datetime.strptime(request.start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             query = query.filter(Log.created_at >= start_date)
 
         if request.end_date:
-            end_date = datetime.strptime(request.end_date, "%Y-%m-%d")
+            end_date = datetime.strptime(request.end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             query = query.filter(Log.created_at <= end_date)
 
         cost_data = query.group_by(Equipment.id).order_by(

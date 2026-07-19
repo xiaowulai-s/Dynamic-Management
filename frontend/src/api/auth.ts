@@ -21,12 +21,13 @@ export interface RegisterParams {
 
 // 登录
 export const login = (params: LoginParams) => {
-  // 使用FormData格式（OAuth2标准）
-  const formData = new FormData()
-  formData.append('username', params.username)
-  formData.append('password', params.password)
+  // OAuth2PasswordRequestForm 要求 application/x-www-form-urlencoded
+  // 使用 URLSearchParams 保证按 x-www-form-urlencoded 编码（FormData 会被浏览器按 multipart 发送）
+  const formBody = new URLSearchParams()
+  formBody.append('username', params.username)
+  formBody.append('password', params.password)
 
-  return request.post('/auth/login', formData, {
+  return request.post('/auth/login', formBody, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -51,7 +52,10 @@ export const changePassword = (oldPassword: string, newPassword: string) => {
   })
 }
 
-// 获取用户列表
-export const getUsers = (params: { skip?: number; limit?: number }) => {
-  return request.get('/auth/users', { params })
-}
+// 用户管理（管理员）
+export const getUsers = () => request.get('/auth/users')
+export const createUser = (data: { username: string; password: string; role: string; is_active: boolean }) =>
+  request.post('/auth/users', data)
+export const updateUser = (id: number, data: { role?: string; is_active?: boolean; password?: string }) =>
+  request.put(`/auth/users/${id}`, data)
+export const deleteUser = (id: number) => request.delete(`/auth/users/${id}`)

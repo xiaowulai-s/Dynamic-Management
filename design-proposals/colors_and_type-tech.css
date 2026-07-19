@@ -1,0 +1,131 @@
+/* ============================================================
+   方案 B · 科技感未来风 (Tech Futuristic · Dark)
+   设计理念：深空背景 + 青蓝主色 + 等宽数字；高密度数据监控感；
+   细发光描边、技术网格、扫描线，像指挥中心的设备监控大屏。
+   适合：实时设备监控、数据大屏、运维中心。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：青蓝（cyan，未来感）—— */
+  --primary-50:  #ECFEFF;
+  --primary-100: #CFFAFE;
+  --primary-400: #22D3EE;
+  --primary-500: #06B6D4;
+  --primary-600: #0891B2;
+
+  /* —— 深空中性阶 —— */
+  --slate-950: #0B1120;
+  --slate-900: #0F172A;
+  --slate-850: #131C2E;
+  --slate-800: #1E293B;
+  --slate-700: #334155;
+  --slate-500: #64748B;
+  --slate-400: #94A3B8;
+  --slate-300: #CBD5E1;
+  --slate-200: #E2E8F0;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #0B1120;
+  --foreground: #E2E8F0;
+  --card: #131C2E;
+  --card-foreground: #E2E8F0;
+  --popover: #131C2E;
+  --popover-foreground: #E2E8F0;
+  --primary: #22D3EE;
+  --primary-foreground: #04111A;
+  --secondary: #1E293B;
+  --secondary-foreground: #CBD5E1;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --accent: #0E2A33;
+  --accent-foreground: #22D3EE;
+  --destructive: #F87171;
+  --destructive-foreground: #1A0606;
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #22D3EE;
+
+  /* —— 圆角：极小，技术感 —— */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* —— 状态色（亮色以适配深底）—— */
+  --state-success: #34D399;
+  --state-warning: #FBBF24;
+  --state-error:   #F87171;
+  --state-info:    #22D3EE;
+
+  /* —— 图表色：青/蓝/绿/紫/灰，数据屏配色 —— */
+  --chart-1: #22D3EE;
+  --chart-2: #38BDF8;
+  --chart-3: #34D399;
+  --chart-4: #A78BFA;
+  --chart-5: #64748B;
+
+  /* —— 字体：几何无衬线 + 等宽数字 —— */
+  --font-sans: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 描边/发光（仅浮层与强调元素使用发光，静态卡用细描边）—— */
+  --shadow-card: none;
+  --shadow-popover: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(34, 211, 238, 0.15);
+  --shadow-drawer: -12px 0 40px rgba(0, 0, 0, 0.7);
+  --glow-primary: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 18px rgba(34, 211, 238, 0.18);
+  --grid-line: rgba(148, 163, 184, 0.06);
+
+  /* —— 间距与密度：高密度 —— */
+  --space-page: 20px;
+  --space-card: 16px;
+  --density: 5;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* 科技风：细发光描边卡片 */
+.card-tech {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+.card-tech::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.06), transparent 40%);
+}
+
+/* 等宽指标数字 */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* 扫描线装饰（用于大屏标题区） */
+.scanline {
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(34, 211, 238, 0.04) 3px,
+    rgba(34, 211, 238, 0.04) 4px
+  );
+}

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仪表盘 · 科技未来</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 B · 科技感未来风 (Tech Futuristic · Dark)
+   设计理念：深空背景 + 青蓝主色 + 等宽数字；高密度数据监控感；
+   细发光描边、技术网格、扫描线，像指挥中心的设备监控大屏。
+   适合：实时设备监控、数据大屏、运维中心。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：青蓝（cyan，未来感）—— */
+  --primary-50:  #ECFEFF;
+  --primary-100: #CFFAFE;
+  --primary-400: #22D3EE;
+  --primary-500: #06B6D4;
+  --primary-600: #0891B2;
+
+  /* —— 深空中性阶 —— */
+  --slate-950: #0B1120;
+  --slate-900: #0F172A;
+  --slate-850: #131C2E;
+  --slate-800: #1E293B;
+  --slate-700: #334155;
+  --slate-500: #64748B;
+  --slate-400: #94A3B8;
+  --slate-300: #CBD5E1;
+  --slate-200: #E2E8F0;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #0B1120;
+  --foreground: #E2E8F0;
+  --card: #131C2E;
+  --card-foreground: #E2E8F0;
+  --popover: #131C2E;
+  --popover-foreground: #E2E8F0;
+  --primary: #22D3EE;
+  --primary-foreground: #04111A;
+  --secondary: #1E293B;
+  --secondary-foreground: #CBD5E1;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --accent: #0E2A33;
+  --accent-foreground: #22D3EE;
+  --destructive: #F87171;
+  --destructive-foreground: #1A0606;
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #22D3EE;
+
+  /* —— 圆角：极小，技术感 —— */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* —— 状态色（亮色以适配深底）—— */
+  --state-success: #34D399;
+  --state-warning: #FBBF24;
+  --state-error:   #F87171;
+  --state-info:    #22D3EE;
+
+  /* —— 图表色：青/蓝/绿/紫/灰，数据屏配色 —— */
+  --chart-1: #22D3EE;
+  --chart-2: #38BDF8;
+  --chart-3: #34D399;
+  --chart-4: #A78BFA;
+  --chart-5: #64748B;
+
+  /* —— 字体：几何无衬线 + 等宽数字 —— */
+  --font-sans: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 描边/发光（仅浮层与强调元素使用发光，静态卡用细描边）—— */
+  --shadow-card: none;
+  --shadow-popover: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(34, 211, 238, 0.15);
+  --shadow-drawer: -12px 0 40px rgba(0, 0, 0, 0.7);
+  --glow-primary: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 18px rgba(34, 211, 238, 0.18);
+  --grid-line: rgba(148, 163, 184, 0.06);
+
+  /* —— 间距与密度：高密度 —— */
+  --space-page: 20px;
+  --space-card: 16px;
+  --density: 5;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* 科技风：细发光描边卡片 */
+.card-tech {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+.card-tech::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.06), transparent 40%);
+}
+
+/* 等宽指标数字 */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* 扫描线装饰（用于大屏标题区） */
+.scanline {
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(34, 211, 238, 0.04) 3px,
+    rgba(34, 211, 238, 0.04) 4px
+  );
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="h-screen overflow-hidden min-h-0 flex" data-viewport-mode="app-shell">
+      <!-- 侧栏 -->
+      <aside class="w-[220px] shrink-0 flex flex-col border-r border-border" style="background:#0F172A;">
+        <div class="h-14 flex items-center gap-2.5 px-4 border-b border-border">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+          </span>
+          <div class="leading-tight">
+            <div class="text-[13px] font-semibold text-foreground">设备信息动态</div>
+            <div class="text-[11px] text-muted-foreground">管理系统 v2.4</div>
+          </div>
+        </div>
+        <nav class="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto no-scrollbar">
+          <a class="flex items-center gap-2.5 px-3 py-2 text-xs text-primary bg-[#0E2A33]/40 border-l-2 border-primary relative">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>仪表盘</span>
+            <span class="ml-auto numeric text-[9px] text-primary/60">01</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 border-l-2 border-transparent cursor-pointer">
+            <i data-lucide="server" class="w-4 h-4"></i><span>设备管理</span>
+            <span class="ml-auto numeric text-[9px] text-muted-foreground/50">02</span>
+          </a>
+          <a data-dom-id="nav-logs" class="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 border-l-2 border-transparent cursor-pointer">
+            <i data-lucide="file-text" class="w-4 h-4"></i><span>日志管理</span>
+            <span class="ml-auto numeric text-[9px] text-muted-foreground/50">03</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 border-l-2 border-transparent cursor-pointer">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i><span>统计分析</span>
+            <span class="ml-auto numeric text-[9px] text-muted-foreground/50">04</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 border-l-2 border-transparent cursor-pointer">
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i><span>批量上传</span>
+            <span class="ml-auto numeric text-[9px] text-muted-foreground/50">05</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 border-l-2 border-transparent cursor-pointer">
+            <i data-lucide="bell" class="w-4 h-4"></i><span>通知中心</span>
+            <span class="ml-auto inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-sm bg-primary/15 text-primary numeric text-[9px]">7</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 border-l-2 border-transparent cursor-pointer">
+            <i data-lucide="settings" class="w-4 h-4"></i><span>系统设置</span>
+            <span class="ml-auto numeric text-[9px] text-muted-foreground/50">07</span>
+          </a>
+        </nav>
+        <div class="border-t border-border p-3 flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-sm bg-primary/15 border border-primary/30 flex items-center justify-center text-primary text-xs font-semibold">张</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs text-foreground">张工</div>
+            <div class="text-[10px] text-muted-foreground">现场工程师</div>
+          </div>
+          <i data-lucide="log-out" class="w-3.5 h-3.5 text-muted-foreground cursor-pointer"></i>
+        </div>
+      </aside>
+
+      <!-- 主区 -->
+      <div class="flex-1 min-w-0 flex flex-col">
+        <!-- topbar -->
+        <header class="h-14 shrink-0 border-b border-border flex items-center px-5 gap-4" style="background:rgba(15,23,42,0.6);">
+          <div class="flex items-center gap-2">
+            <span class="numeric text-[10px] text-muted-foreground">[01]</span>
+            <h1 class="text-sm font-medium text-foreground">仪表盘</h1>
+            <span class="text-muted-foreground/40">/</span>
+            <span class="text-xs text-muted-foreground">实时监控总览</span>
+          </div>
+          <div class="flex-1"></div>
+          <div class="relative w-64">
+            <i data-lucide="search" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground"></i>
+            <input class="w-full bg-input/60 border border-border rounded-md pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" placeholder="搜索设备 / 日志 / 编号">
+          </div>
+          <button class="relative w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-destructive"></span>
+          </button>
+          <div class="w-px h-6 bg-border"></div>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-sm bg-primary/15 border border-primary/30 flex items-center justify-center text-primary text-xs font-semibold">张</div>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-muted-foreground"></i>
+          </div>
+        </header>
+
+        <!-- 内容区 -->
+        <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto p-5 space-y-5">
+          <!-- KPI 行 -->
+          <div class="grid grid-cols-4 gap-4">
+            <div class="card-tech p-4 relative overflow-hidden">
+              <div class="scanline absolute inset-x-0 top-0 h-8 pointer-events-none"></div>
+              <div class="relative flex items-center justify-between mb-2">
+                <span class="text-xs text-muted-foreground">设备总数</span>
+                <i data-lucide="server" class="w-4 h-4 text-primary/70"></i>
+              </div>
+              <div class="relative flex items-baseline gap-1.5">
+                <span class="numeric text-2xl font-semibold text-primary">1,284</span>
+                <span class="text-[10px] text-muted-foreground numeric">台</span>
+              </div>
+              <div class="relative mt-2 flex items-center gap-1 text-[10px]">
+                <i data-lucide="trending-up" class="w-3 h-3" style="color:var(--state-success);"></i>
+                <span class="numeric" style="color:var(--state-success);">+2.4%</span>
+                <span class="text-muted-foreground">同比上月</span>
+              </div>
+            </div>
+            <div class="card-tech p-4 relative overflow-hidden">
+              <div class="scanline absolute inset-x-0 top-0 h-8 pointer-events-none"></div>
+              <div class="relative flex items-center justify-between mb-2">
+                <span class="text-xs text-muted-foreground">在线设备</span>
+                <i data-lucide="activity" class="w-4 h-4 text-primary/70"></i>
+              </div>
+              <div class="relative flex items-baseline gap-1.5">
+                <span class="numeric text-2xl font-semibold text-primary">1,156</span>
+                <span class="text-[10px] text-muted-foreground numeric">/ 1284</span>
+              </div>
+              <div class="relative mt-2 flex items-center gap-1 text-[10px]">
+                <span class="numeric" style="color:var(--state-success);">90.0%</span>
+                <span class="text-muted-foreground">在线率</span>
+                <span class="ml-auto flex items-center gap-1 text-muted-foreground"><span class="w-1.5 h-1.5 rounded-full" style="background:var(--state-success);"></span>运行中</span>
+              </div>
+            </div>
+            <div class="card-tech p-4 relative overflow-hidden">
+              <div class="scanline absolute inset-x-0 top-0 h-8 pointer-events-none"></div>
+              <div class="relative flex items-center justify-between mb-2">
+                <span class="text-xs text-muted-foreground">待审核日志</span>
+                <i data-lucide="file-clock" class="w-4 h-4" style="color:var(--state-warning);"></i>
+              </div>
+              <div class="relative flex items-baseline gap-1.5">
+                <span class="numeric text-2xl font-semibold" style="color:var(--state-warning);">37</span>
+                <span class="text-[10px] text-muted-foreground numeric">条</span>
+              </div>
+              <div class="relative mt-2 flex items-center gap-1 text-[10px]">
+                <i data-lucide="arrow-up-right" class="w-3 h-3" style="color:var(--state-warning);"></i>
+                <span class="numeric" style="color:var(--state-warning);">+5</span>
+                <span class="text-muted-foreground">较昨日</span>
+              </div>
+            </div>
+            <div class="card-tech p-4 relative overflow-hidden">
+              <div class="scanline absolute inset-x-0 top-0 h-8 pointer-events-none"></div>
+              <div class="relative flex items-center justify-between mb-2">
+                <span class="text-xs text-muted-foreground">本月新增日志</span>
+                <i data-lucide="file-plus-2" class="w-4 h-4 text-primary/70"></i>
+              </div>
+              <div class="relative flex items-baseline gap-1.5">
+                <span class="numeric text-2xl font-semibold text-primary">248</span>
+                <span class="text-[10px] text-muted-foreground numeric">条</span>
+              </div>
+              <div class="relative mt-2 flex items-center gap-1 text-[10px]">
+                <i data-lucide="trending-up" class="w-3 h-3" style="color:var(--state-success);"></i>
+                <span class="numeric" style="color:var(--state-success);">+12.6%</span>
+                <span class="text-muted-foreground">环比上月</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图表 + 右侧流 -->
+          <div class="grid grid-cols-3 gap-4">
+            <!-- 左：图表 -->
+            <div class="col-span-2 space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="card-tech p-4">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="w-1 h-3 bg-primary"></span>
+                      <h3 class="text-xs font-medium text-foreground">设备状态分布</h3>
+                    </div>
+                    <span class="numeric text-[10px] text-muted-foreground">REAL-TIME</span>
+                  </div>
+                  <div class="h-[180px]"><canvas id="chart-status"></canvas></div>
+                </div>
+                <div class="card-tech p-4">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="w-1 h-3 bg-primary"></span>
+                      <h3 class="text-xs font-medium text-foreground">日志趋势 · 近7天</h3>
+                    </div>
+                    <span class="numeric text-[10px] text-muted-foreground">07-12 ~ 07-18</span>
+                  </div>
+                  <div class="h-[180px]"><canvas id="chart-trend"></canvas></div>
+                </div>
+              </div>
+              <div class="card-tech p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="w-1 h-3 bg-primary"></span>
+                    <h3 class="text-xs font-medium text-foreground">日志类型分布</h3>
+                  </div>
+                  <span class="numeric text-[10px] text-muted-foreground">本月 · 单位:条</span>
+                </div>
+                <div class="h-[200px]"><canvas id="chart-type"></canvas></div>
+              </div>
+            </div>
+
+            <!-- 右：待审核 + 告警 -->
+            <div class="space-y-4">
+              <div class="card-tech p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="w-1 h-3" style="background:var(--state-warning);"></span>
+                    <h3 class="text-xs font-medium text-foreground">待审核日志</h3>
+                  </div>
+                  <span class="numeric text-[10px] px-1.5 py-0.5 rounded-sm border" style="border-color:var(--state-warning);color:var(--state-warning);">37</span>
+                </div>
+                <ul class="space-y-2.5">
+                  <li class="flex items-center gap-2 py-2 border-b border-border last:border-0">
+                    <span class="numeric text-[10px] text-muted-foreground w-[78px] truncate">LOG-0718-01</span>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-xs text-foreground truncate">空压机A-12</div>
+                      <div class="text-[10px] text-muted-foreground">维修 · 张工</div>
+                    </div>
+                    <span class="numeric text-[9px] text-muted-foreground">09:24</span>
+                  </li>
+                  <li class="flex items-center gap-2 py-2 border-b border-border last:border-0">
+                    <span class="numeric text-[10px] text-muted-foreground w-[78px] truncate">LOG-0717-02</span>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-xs text-foreground truncate">输送带C-03</div>
+                      <div class="text-[10px] text-muted-foreground">故障 · 王工</div>
+                    </div>
+                    <span class="numeric text-[9px] text-muted-foreground">10:55</span>
+                  </li>
+                  <li class="flex items-center gap-2 py-2 border-b border-border last:border-0">
+                    <span class="numeric text-[10px] text-muted-foreground w-[78px] truncate">LOG-0716-04</span>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-xs text-foreground truncate">机械手E-09</div>
+                      <div class="text-[10px] text-muted-foreground">安装 · 赵工</div>
+                    </div>
+                    <span class="numeric text-[9px] text-muted-foreground">11:20</span>
+                  </li>
+                </ul>
+                <a class="mt-3 flex items-center justify-center gap-1 text-[11px] text-primary hover:underline cursor-pointer">
+                  查看全部 <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </a>
+              </div>
+
+              <div class="card-tech p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="w-1 h-3 bg-destructive"></span>
+                    <h3 class="text-xs font-medium text-foreground">设备告警</h3>
+                  </div>
+                  <span class="flex items-center gap-1 numeric text-[10px]" style="color:var(--state-error);">
+                    <span class="relative flex h-1.5 w-1.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background:var(--state-error);"></span>
+                      <span class="relative inline-flex rounded-full h-1.5 w-1.5" style="background:var(--state-error);"></span>
+                    </span>
+                    LIVE
+                  </span>
+                </div>
+                <ul class="space-y-2">
+                  <li class="flex items-start gap-2 p-2 rounded-sm border border-border bg-muted/20">
+                    <span class="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style="background:var(--state-error);"></span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs text-foreground">锅炉D-01</span>
+                        <span class="numeric text-[9px]" style="color:var(--state-error);">CRIT</span>
+                      </div>
+                      <div class="text-[10px] text-muted-foreground">压力波动 · 超出阈值 1.2MPa</div>
+                    </div>
+                  </li>
+                  <li class="flex items-start gap-2 p-2 rounded-sm border border-border bg-muted/20">
+                    <span class="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style="background:var(--state-warning);"></span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs text-foreground">包装机B-07</span>
+                        <span class="numeric text-[9px]" style="color:var(--state-warning);">WARN</span>
+                      </div>
+                      <div class="text-[10px] text-muted-foreground">温度超限 · 78℃</div>
+                    </div>
+                  </li>
+                  <li class="flex items-start gap-2 p-2 rounded-sm border border-border bg-muted/20">
+                    <span class="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style="background:var(--state-warning);"></span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs text-foreground">冷却塔F-02</span>
+                        <span class="numeric text-[9px]" style="color:var(--state-warning);">WARN</span>
+                      </div>
+                      <div class="text-[10px] text-muted-foreground">液位低 · 低于 15%</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 图表脚本 -->
+      <script>
+        (function () {
+          var cs = getComputedStyle(document.documentElement);
+          var c1 = cs.getPropertyValue('--chart-1').trim();
+          var c2 = cs.getPropertyValue('--chart-2').trim();
+          var c3 = cs.getPropertyValue('--chart-3').trim();
+          var c4 = cs.getPropertyValue('--chart-4').trim();
+          var c5 = cs.getPropertyValue('--chart-5').trim();
+          var grid = 'rgba(148,163,184,0.10)';
+          var tick = '#94A3B8';
+          Chart.defaults.color = tick;
+          Chart.defaults.borderColor = grid;
+          Chart.defaults.font.family = "'JetBrains Mono', monospace";
+          Chart.defaults.font.size = 10;
+
+          new Chart(document.getElementById('chart-status'), {
+            type: 'doughnut',
+            data: {
+              labels: ['在线', '离线', '维修中', '报废'],
+              datasets: [{ data: [1156, 89, 28, 11], backgroundColor: [c1, c5, c3, c4], borderWidth: 0, hoverOffset: 4 }]
+            },
+            options: {
+              cutout: '68%',
+              plugins: { legend: { position: 'right', labels: { boxWidth: 8, boxHeight: 8, color: tick, font: { size: 11 } } } },
+              maintainAspectRatio: false
+            }
+          });
+
+          new Chart(document.getElementById('chart-trend'), {
+            type: 'line',
+            data: {
+              labels: ['07-12', '07-13', '07-14', '07-15', '07-16', '07-17', '07-18'],
+              datasets: [{
+                data: [32, 41, 28, 35, 44, 38, 30],
+                borderColor: c1,
+                backgroundColor: 'rgba(34,211,238,0.12)',
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: c1,
+                pointRadius: 3,
+                borderWidth: 2
+              }]
+            },
+            options: {
+              plugins: { legend: { display: false }, tooltip: { intersect: false, mode: 'index' } },
+              scales: {
+                x: { grid: { color: grid }, ticks: { color: tick } },
+                y: { grid: { color: grid }, ticks: { color: tick }, beginAtZero: true }
+              },
+              maintainAspectRatio: false
+            }
+          });
+
+          new Chart(document.getElementById('chart-type'), {
+            type: 'bar',
+            data: {
+              labels: ['维修', '巡检', '保养', '故障', '安装', '校准', '配件', '报废'],
+              datasets: [{ data: [62, 58, 41, 33, 24, 18, 8, 4], backgroundColor: c1, borderRadius: 2, barThickness: 12 }]
+            },
+            options: {
+              indexAxis: 'y',
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { color: grid }, ticks: { color: tick } },
+                y: { grid: { display: false }, ticks: { color: tick } }
+              },
+              maintainAspectRatio: false
+            }
+          });
+        })();
+      </script>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

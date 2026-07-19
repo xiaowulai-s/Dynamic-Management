@@ -1,0 +1,106 @@
+/* ============================================================
+   方案 A · 现代简约风 (Modern Minimal)
+   设计理念：克制、理性、留白；单一品牌主色 + 中性灰阶；
+   细线分隔、无阴影静态卡片、紧凑理性的信息层级。
+   适合：注重效率与信息密度的企业内网后台。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：石板蓝（单一色相，仅明度阶）—— */
+  --primary-50:  #EFF6FF;
+  --primary-100: #DBEAFE;
+  --primary-500: #3B82F6;
+  --primary-600: #2563EB;
+  --primary-700: #1D4ED8;
+
+  /* —— 中性灰阶 —— */
+  --gray-50:  #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-900: #0F172A;
+
+  /* —— 语义别名（prefixless，供 fill-html-head 映射）—— */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #2563EB;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #334155;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #EFF6FF;
+  --accent-foreground: #1D4ED8;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #2563EB;
+
+  /* —— 圆角：克制偏小 —— */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* —— 状态色 —— */
+  --state-success: #16A34A;
+  --state-warning: #D97706;
+  --state-error:   #DC2626;
+  --state-info:    #2563EB;
+
+  /* —— 图表色（主色阶 + 中性）—— */
+  --chart-1: #2563EB;
+  --chart-2: #60A5FA;
+  --chart-3: #93C5FD;
+  --chart-4: #64748B;
+  --chart-5: #CBD5E1;
+
+  /* —— 字体 —— */
+  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 阴影：静态卡片不投影，仅浮层使用 —— */
+  --shadow-card: none;
+  --shadow-popover: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-drawer: -8px 0 24px rgba(15, 23, 42, 0.10);
+
+  /* —— 间距与密度 —— */
+  --space-page: 24px;
+  --space-card: 20px;
+  --density: 3;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  letter-spacing: -0.005em;
+}
+
+/* 简约风：细线分隔的卡片，无投影 */
+.card-minimal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* 等宽数字用于 KPI */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

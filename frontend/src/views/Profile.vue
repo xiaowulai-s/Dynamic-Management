@@ -12,8 +12,8 @@
           {{ userInfo?.username || '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="角色">
-          <el-tag :type="userInfo?.role === 'admin' ? 'danger' : 'primary'">
-            {{ userInfo?.role === 'admin' ? '管理员' : '普通用户' }}
+          <el-tag :type="getRoleTagType(userInfo?.role)">
+            {{ getRoleLabel(userInfo?.role) }}
           </el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="创建时间">
@@ -68,6 +68,7 @@ import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { changePassword } from '@/api'
+import { getRoleLabel, getRoleTagType } from '@/utils/role'
 
 const userStore = useUserStore()
 const passwordFormRef = ref<FormInstance>()
@@ -112,7 +113,7 @@ const handleChangePassword = async () => {
   try {
     await passwordFormRef.value?.validate()
     changing.value = true
-    await changePassword(passwordForm)
+    await changePassword(passwordForm.old_password, passwordForm.new_password)
     ElMessage.success('密码修改成功')
     passwordForm.old_password = ''
     passwordForm.new_password = ''

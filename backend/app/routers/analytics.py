@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 
 from app.database import get_db
@@ -18,7 +18,7 @@ router = APIRouter()
 def parse_date_safe(date_str: str, field_name: str = "日期") -> datetime:
     """安全解析日期字符串"""
     try:
-        return datetime.strptime(date_str, "%Y-%m-%d")
+        return datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -187,7 +187,7 @@ async def get_maintenance_schedule(
     db: Session = Depends(get_db)
 ):
     """保养计划统计（未来N天）"""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     end_date = now + timedelta(days=days)
 
     # 查询即将到期的保养记录

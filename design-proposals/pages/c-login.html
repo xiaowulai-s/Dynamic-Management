@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页 · 复古怀旧</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 C · 复古怀旧风 (Retro Nostalgic)
+   设计理念：暖纸背景 + 咖啡主色 + 衬线标题；文档式档案排版；
+   方正卡片、实线边框、印章/工单感，像一本工业设备维修档案册。
+   适合：注重记录留痕、档案属性强的设备维保系统。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：咖啡棕（暖色，单一色相）—— */
+  --primary-50:  #F5EFE6;
+  --primary-100: #E8DCC6;
+  --primary-300: #B08D6E;
+  --primary-500: #6F4E37;
+  --primary-700: #4A3322;
+
+  /* —— 暖中性阶（纸感）—— */
+  --paper-50:  #FBF6EC;
+  --paper-100: #F5EFE6;
+  --paper-200: #EDE3D2;
+  --paper-300: #D9C9B0;
+  --paper-500: #8A6F52;
+  --paper-700: #5C4633;
+  --ink-900:   #3D2C1E;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #F5EFE6;
+  --foreground: #3D2C1E;
+  --card: #FBF6EC;
+  --card-foreground: #3D2C1E;
+  --popover: #FBF6EC;
+  --popover-foreground: #3D2C1E;
+  --primary: #6F4E37;
+  --primary-foreground: #FBF6EC;
+  --secondary: #EDE3D2;
+  --secondary-foreground: #5C4633;
+  --muted: #EDE3D2;
+  --muted-foreground: #8A6F52;
+  --accent: #EFE4CF;
+  --accent-foreground: #6F4E37;
+  --destructive: #8B2C1B;
+  --destructive-foreground: #FBF6EC;
+  --border: #D9C9B0;
+  --input: #D9C9B0;
+  --ring: #6F4E37;
+
+  /* —— 圆角：方正，档案卡片感 —— */
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+
+  /* —— 状态色：泥土色系（复古调）—— */
+  --state-success: #4B6B3B;  /* 橄榄绿 */
+  --state-warning: #B7410E;  /* 赭石/铁锈 */
+  --state-error:   #8B2C1B;  /* 暗砖红 */
+  --state-info:    #6F4E37;  /* 咖啡 */
+
+  /* —— 图表色：大地色系 —— */
+  --chart-1: #6F4E37;
+  --chart-2: #B7410E;
+  --chart-3: #4B6B3B;
+  --chart-4: #C9A227;
+  --chart-5: #8A6F52;
+
+  /* —— 字体：衬线标题 + 无衬线正文 —— */
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Noto Sans SC', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Courier New', 'SFMono-Regular', monospace;
+
+  /* —— 阴影：纸面无投影，浮层用柔棕阴影 —— */
+  --shadow-card: none;
+  --shadow-popover: 0 6px 18px rgba(74, 51, 34, 0.18);
+  --shadow-drawer: -8px 0 28px rgba(74, 51, 34, 0.20);
+
+  /* —— 间距与密度：中等偏松，文档式 —— */
+  --space-page: 28px;
+  --space-card: 22px;
+  --density: 2;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* 复古风：衬线标题 */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+/* 纸面卡片：实线边框、双线分隔 */
+.card-retro {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  background-image: linear-gradient(180deg, rgba(176, 141, 110, 0.04), transparent 120px);
+}
+
+/* 印章/工单标签 */
+.stamp {
+  border: 2px solid var(--state-error);
+  color: var(--state-error);
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+  transform: rotate(-6deg);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  opacity: 0.85;
+}
+
+/* 等宽（工单编号） */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased bg-background text-foreground">
+    <main class="min-h-screen flex items-center justify-center px-4 py-10">
+      <div class="w-full max-w-[460px]">
+
+        <!-- 顶部品牌区 -->
+        <header class="text-center mb-6">
+          <div class="flex items-center justify-center gap-2 mb-3">
+            <span class="inline-flex items-center justify-center w-9 h-9 border border-border bg-card">
+              <i data-lucide="archive" class="w-5 h-5 text-primary"></i>
+            </span>
+            <h1 class="font-display text-2xl text-foreground tracking-wide">设备信息动态管理系统</h1>
+          </div>
+          <p class="text-sm text-muted-foreground tracking-wider">设备全生命周期日志管理</p>
+          <div class="mt-4 flex justify-center">
+            <span class="stamp text-xs">设备档案</span>
+          </div>
+        </header>
+
+        <!-- 登记卡 -->
+        <section class="card-retro p-7">
+          <div class="flex items-center justify-between border-b border-border pb-3 mb-5">
+            <h2 class="font-display text-lg text-foreground">登记入册</h2>
+            <span class="numeric text-xs text-muted-foreground">NO. DM-2026-0718</span>
+          </div>
+
+          <form class="space-y-5" onsubmit="return false;">
+            <!-- 用户名 -->
+            <div>
+              <label class="block text-xs text-muted-foreground mb-1.5 tracking-wide">用户名</label>
+              <div class="flex items-center border border-input bg-card">
+                <span class="px-3 py-2.5 border-r border-border text-muted-foreground">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </span>
+                <input type="text" value="zhanggong" class="flex-1 px-3 py-2.5 bg-transparent text-sm text-foreground focus:outline-none" placeholder="请输入用户名" />
+              </div>
+            </div>
+
+            <!-- 密码 -->
+            <div>
+              <label class="block text-xs text-muted-foreground mb-1.5 tracking-wide">密码</label>
+              <div class="flex items-center border border-input bg-card">
+                <span class="px-3 py-2.5 border-r border-border text-muted-foreground">
+                  <i data-lucide="key-round" class="w-4 h-4"></i>
+                </span>
+                <input type="password" value="********" class="flex-1 px-3 py-2.5 bg-transparent text-sm text-foreground focus:outline-none" placeholder="请输入密码" />
+              </div>
+            </div>
+
+            <!-- 记住我 + 忘记密码 -->
+            <div class="flex items-center justify-between text-xs">
+              <label class="flex items-center gap-2 text-muted-foreground cursor-pointer">
+                <span class="w-3.5 h-3.5 border border-input bg-card inline-flex items-center justify-center">
+                  <i data-lucide="check" class="w-3 h-3 text-primary"></i>
+                </span>
+                记住我
+              </label>
+              <a class="text-primary hover:underline" href="#">忘记密码？</a>
+            </div>
+
+            <!-- 登录按钮 -->
+            <button data-dom-id="btn-login" type="submit" class="w-full bg-primary text-primary-foreground font-display tracking-widest py-3 border border-primary hover:bg-primary-700 transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              登 录
+            </button>
+          </form>
+
+          <!-- 分隔线 -->
+          <div class="flex items-center gap-3 my-5">
+            <span class="flex-1 h-px bg-border"></span>
+            <span class="text-xs text-muted-foreground tracking-widest">档案签章</span>
+            <span class="flex-1 h-px bg-border"></span>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-muted-foreground">
+            <span class="numeric">v3.2.1 · 内网部署</span>
+            <span class="flex items-center gap-1">
+              <i data-lucide="shield-check" class="w-3 h-3"></i>
+              现场工程师通道
+            </span>
+          </div>
+        </section>
+
+        <!-- 底部版权 -->
+        <footer class="text-center mt-6 text-[11px] text-muted-foreground leading-relaxed">
+          <p>© 2026 设备信息动态管理系统 · 档案室维护</p>
+          <p class="mt-1">仅限厂区内网访问 · 操作记录将被留痕存档</p>
+        </footer>
+
+      </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

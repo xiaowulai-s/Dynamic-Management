@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志管理 · 复古怀旧</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 C · 复古怀旧风 (Retro Nostalgic)
+   设计理念：暖纸背景 + 咖啡主色 + 衬线标题；文档式档案排版；
+   方正卡片、实线边框、印章/工单感，像一本工业设备维修档案册。
+   适合：注重记录留痕、档案属性强的设备维保系统。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：咖啡棕（暖色，单一色相）—— */
+  --primary-50:  #F5EFE6;
+  --primary-100: #E8DCC6;
+  --primary-300: #B08D6E;
+  --primary-500: #6F4E37;
+  --primary-700: #4A3322;
+
+  /* —— 暖中性阶（纸感）—— */
+  --paper-50:  #FBF6EC;
+  --paper-100: #F5EFE6;
+  --paper-200: #EDE3D2;
+  --paper-300: #D9C9B0;
+  --paper-500: #8A6F52;
+  --paper-700: #5C4633;
+  --ink-900:   #3D2C1E;
+
+  /* —— 语义别名（prefixless）—— */
+  --background: #F5EFE6;
+  --foreground: #3D2C1E;
+  --card: #FBF6EC;
+  --card-foreground: #3D2C1E;
+  --popover: #FBF6EC;
+  --popover-foreground: #3D2C1E;
+  --primary: #6F4E37;
+  --primary-foreground: #FBF6EC;
+  --secondary: #EDE3D2;
+  --secondary-foreground: #5C4633;
+  --muted: #EDE3D2;
+  --muted-foreground: #8A6F52;
+  --accent: #EFE4CF;
+  --accent-foreground: #6F4E37;
+  --destructive: #8B2C1B;
+  --destructive-foreground: #FBF6EC;
+  --border: #D9C9B0;
+  --input: #D9C9B0;
+  --ring: #6F4E37;
+
+  /* —— 圆角：方正，档案卡片感 —— */
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+
+  /* —— 状态色：泥土色系（复古调）—— */
+  --state-success: #4B6B3B;  /* 橄榄绿 */
+  --state-warning: #B7410E;  /* 赭石/铁锈 */
+  --state-error:   #8B2C1B;  /* 暗砖红 */
+  --state-info:    #6F4E37;  /* 咖啡 */
+
+  /* —— 图表色：大地色系 —— */
+  --chart-1: #6F4E37;
+  --chart-2: #B7410E;
+  --chart-3: #4B6B3B;
+  --chart-4: #C9A227;
+  --chart-5: #8A6F52;
+
+  /* —— 字体：衬线标题 + 无衬线正文 —— */
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Noto Sans SC', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Courier New', 'SFMono-Regular', monospace;
+
+  /* —— 阴影：纸面无投影，浮层用柔棕阴影 —— */
+  --shadow-card: none;
+  --shadow-popover: 0 6px 18px rgba(74, 51, 34, 0.18);
+  --shadow-drawer: -8px 0 28px rgba(74, 51, 34, 0.20);
+
+  /* —— 间距与密度：中等偏松，文档式 —— */
+  --space-page: 28px;
+  --space-card: 22px;
+  --density: 2;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* 复古风：衬线标题 */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+/* 纸面卡片：实线边框、双线分隔 */
+.card-retro {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  background-image: linear-gradient(180deg, rgba(176, 141, 110, 0.04), transparent 120px);
+}
+
+/* 印章/工单标签 */
+.stamp {
+  border: 2px solid var(--state-error);
+  color: var(--state-error);
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+  transform: rotate(-6deg);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  opacity: 0.85;
+}
+
+/* 等宽（工单编号） */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="h-screen overflow-hidden min-h-0 font-sans antialiased bg-background text-foreground">
+    <main data-viewport-mode="app-shell" class="h-screen overflow-hidden min-h-0 flex">
+      <!-- 侧栏 -->
+      <aside class="w-[240px] shrink-0 bg-background border-r border-border flex flex-col">
+        <div class="px-5 py-5 border-b border-border">
+          <div class="flex items-center gap-2.5">
+            <span class="inline-flex items-center justify-center w-8 h-8 border-2 border-state-error bg-card">
+              <i data-lucide="archive" class="w-4 h-4 text-primary"></i>
+            </span>
+            <div class="leading-tight">
+              <div class="font-display text-sm text-foreground">设备信息动态</div>
+              <div class="font-display text-sm text-foreground">管理系统</div>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center justify-between">
+            <span class="numeric text-[10px] text-muted-foreground">SYS · v3.2.1</span>
+            <span class="text-[10px] text-muted-foreground tracking-wider">档案室</span>
+          </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-muted-foreground"></i>
+            <span>仪表盘</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted">
+            <i data-lucide="hard-drive" class="w-4 h-4 text-muted-foreground"></i>
+            <span>设备管理</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm bg-primary text-primary-foreground border border-primary">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span class="font-medium">日志管理</span>
+            <span class="ml-auto numeric text-[10px]">248</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-muted-foreground"></i>
+            <span>统计分析</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted">
+            <i data-lucide="upload" class="w-4 h-4 text-muted-foreground"></i>
+            <span>批量上传</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted">
+            <i data-lucide="bell" class="w-4 h-4 text-muted-foreground"></i>
+            <span>通知中心</span>
+            <span class="ml-auto inline-flex items-center justify-center w-4 h-4 text-[10px] bg-state-error text-card">3</span>
+          </a>
+          <a class="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-muted">
+            <i data-lucide="settings" class="w-4 h-4 text-muted-foreground"></i>
+            <span>系统设置</span>
+          </a>
+        </nav>
+
+        <div class="border-t border-border p-3 flex items-center gap-2.5">
+          <span class="w-9 h-9 bg-primary text-primary-foreground inline-flex items-center justify-center font-display text-sm">张</span>
+          <div class="leading-tight flex-1 min-w-0">
+            <div class="text-sm text-foreground truncate">张工</div>
+            <div class="text-[11px] text-muted-foreground truncate">现场工程师</div>
+          </div>
+          <i data-lucide="chevron-up-down" class="w-4 h-4 text-muted-foreground"></i>
+        </div>
+      </aside>
+
+      <!-- 主区 -->
+      <section class="flex-1 min-w-0 flex flex-col">
+        <header class="h-14 shrink-0 border-b border-border bg-background flex items-center justify-between px-6">
+          <div class="flex items-baseline gap-3">
+            <h1 class="font-display text-lg text-foreground">日志管理</h1>
+            <span class="numeric text-xs text-muted-foreground">NO. LOG-LIST-2026-0718</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center border border-input bg-card px-2.5 py-1.5 w-64">
+              <i data-lucide="search" class="w-4 h-4 text-muted-foreground"></i>
+              <input class="ml-2 bg-transparent text-xs flex-1 focus:outline-none" placeholder="搜索日志编号 / 设备" />
+            </div>
+            <button class="relative w-9 h-9 border border-border bg-card inline-flex items-center justify-center">
+              <i data-lucide="bell" class="w-4 h-4 text-foreground"></i>
+              <span class="absolute -top-1 -right-1 w-2 h-2 bg-state-error border border-card"></span>
+            </button>
+            <span class="w-9 h-9 bg-primary text-primary-foreground inline-flex items-center justify-center font-display text-sm">张</span>
+          </div>
+        </header>
+
+        <!-- 可滚动内容区 -->
+        <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto p-6 space-y-5">
+
+          <!-- 工具条标题 -->
+          <div class="flex items-end justify-between">
+            <div>
+              <h2 class="font-display text-base text-foreground">设备日志档案</h2>
+              <p class="text-xs text-muted-foreground mt-0.5">8 类日志归档 · 含安装/维修/报废/巡检/保养/故障/配件/校准</p>
+            </div>
+            <button class="bg-primary text-primary-foreground border border-primary px-4 py-2 text-sm font-display tracking-wide flex items-center gap-2 hover:bg-primary-700">
+              <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+              新建日志
+            </button>
+          </div>
+
+          <!-- 筛选工具条 -->
+          <section class="card-retro p-4">
+            <div class="grid grid-cols-6 gap-3 items-end">
+              <div>
+                <label class="block text-[11px] text-muted-foreground mb-1 tracking-wide">日志类型</label>
+                <select class="w-full border border-input bg-card px-2.5 py-2 text-sm text-foreground focus:outline-none">
+                  <option>全部类型</option>
+                  <option>安装</option><option>维修</option><option>巡检</option>
+                  <option>保养</option><option>故障</option><option>报废</option>
+                  <option>配件</option><option>校准</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] text-muted-foreground mb-1 tracking-wide">状态</label>
+                <select class="w-full border border-input bg-card px-2.5 py-2 text-sm text-foreground focus:outline-none">
+                  <option>全部状态</option>
+                  <option>待审核</option><option>已通过</option><option>已驳回</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] text-muted-foreground mb-1 tracking-wide">设备</label>
+                <select class="w-full border border-input bg-card px-2.5 py-2 text-sm text-foreground focus:outline-none">
+                  <option>全部设备</option>
+                  <option>空压机A-12</option><option>包装机B-07</option>
+                  <option>输送带C-03</option><option>锅炉D-01</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] text-muted-foreground mb-1 tracking-wide">开始日期</label>
+                <input type="date" value="2026-07-01" class="w-full border border-input bg-card px-2.5 py-2 text-sm text-foreground focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-[11px] text-muted-foreground mb-1 tracking-wide">结束日期</label>
+                <input type="date" value="2026-07-18" class="w-full border border-input bg-card px-2.5 py-2 text-sm text-foreground focus:outline-none" />
+              </div>
+              <div class="flex gap-2">
+                <button class="flex-1 bg-primary text-primary-foreground border border-primary px-3 py-2 text-sm flex items-center justify-center gap-1 hover:bg-primary-700">
+                  <i data-lucide="search" class="w-3.5 h-3.5"></i>查询
+                </button>
+                <button class="flex-1 bg-card text-foreground border border-border px-3 py-2 text-sm flex items-center justify-center gap-1 hover:bg-muted">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>重置
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 数据表格 -->
+          <section class="card-retro overflow-hidden">
+            <!-- 表头工具 -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div class="flex items-center gap-3">
+                <h3 class="font-display text-sm text-foreground">日志档案清单</h3>
+                <span class="numeric text-[11px] text-muted-foreground">共 248 条</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                <button class="flex items-center gap-1 px-2 py-1 border border-border bg-card hover:bg-muted">
+                  <i data-lucide="filter" class="w-3.5 h-3.5"></i>筛选
+                </button>
+                <button class="flex items-center gap-1 px-2 py-1 border border-border bg-card hover:bg-muted">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>导出
+                </button>
+              </div>
+            </div>
+
+            <!-- 表格 -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-primary text-primary-foreground">
+                    <th class="text-left px-4 py-2.5 font-display font-medium tracking-wide text-xs">日志编号</th>
+                    <th class="text-left px-4 py-2.5 font-display font-medium tracking-wide text-xs">设备名称</th>
+                    <th class="text-left px-4 py-2.5 font-display font-medium tracking-wide text-xs">日志类型</th>
+                    <th class="text-left px-4 py-2.5 font-display font-medium tracking-wide text-xs">提交人</th>
+                    <th class="text-left px-4 py-2.5 font-display font-medium tracking-wide text-xs">提交时间</th>
+                    <th class="text-left px-4 py-2.5 font-display font-medium tracking-wide text-xs">状态</th>
+                    <th class="text-right px-4 py-2.5 font-display font-medium tracking-wide text-xs">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- 行1 -->
+                  <tr data-dom-id="row-log-1" class="border-b border-border bg-card hover:bg-muted cursor-pointer">
+                    <td class="px-4 py-3 numeric text-xs text-foreground">LOG-2026-0718-01</td>
+                    <td class="px-4 py-3 text-foreground">空压机A-12</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center gap-1 text-xs text-primary"><i data-lucide="wrench" class="w-3.5 h-3.5"></i>维修</span></td>
+                    <td class="px-4 py-3 text-foreground">张工</td>
+                    <td class="px-4 py-3 numeric text-xs text-muted-foreground">2026-07-18 09:24</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 border border-state-warning text-state-warning text-[11px] tracking-wide">待审核</span></td>
+                    <td class="px-4 py-3 text-right"><a class="text-primary text-xs hover:underline">查看</a></td>
+                  </tr>
+                  <!-- 行2 -->
+                  <tr class="border-b border-border bg-card hover:bg-muted cursor-pointer">
+                    <td class="px-4 py-3 numeric text-xs text-foreground">LOG-2026-0717-03</td>
+                    <td class="px-4 py-3 text-foreground">包装机B-07</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center gap-1 text-xs text-state-info"><i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>巡检</span></td>
+                    <td class="px-4 py-3 text-foreground">李工</td>
+                    <td class="px-4 py-3 numeric text-xs text-muted-foreground">2026-07-17 14:10</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 border border-state-success text-state-success text-[11px] tracking-wide">已通过</span></td>
+                    <td class="px-4 py-3 text-right"><a class="text-primary text-xs hover:underline">查看</a></td>
+                  </tr>
+                  <!-- 行3 -->
+                  <tr class="border-b border-border bg-card hover:bg-muted cursor-pointer">
+                    <td class="px-4 py-3 numeric text-xs text-foreground">LOG-2026-0717-02</td>
+                    <td class="px-4 py-3 text-foreground">输送带C-03</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center gap-1 text-xs text-state-error"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>故障</span></td>
+                    <td class="px-4 py-3 text-foreground">王工</td>
+                    <td class="px-4 py-3 numeric text-xs text-muted-foreground">2026-07-17 10:55</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 border border-state-warning text-state-warning text-[11px] tracking-wide">待审核</span></td>
+                    <td class="px-4 py-3 text-right"><a class="text-primary text-xs hover:underline">查看</a></td>
+                  </tr>
+                  <!-- 行4 -->
+                  <tr class="border-b border-border bg-card hover:bg-muted cursor-pointer">
+                    <td class="px-4 py-3 numeric text-xs text-foreground">LOG-2026-0716-05</td>
+                    <td class="px-4 py-3 text-foreground">锅炉D-01</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center gap-1 text-xs text-state-info"><i data-lucide="droplets" class="w-3.5 h-3.5"></i>保养</span></td>
+                    <td class="px-4 py-3 text-foreground">张工</td>
+                    <td class="px-4 py-3 numeric text-xs text-muted-foreground">2026-07-16 16:30</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 border border-state-success text-state-success text-[11px] tracking-wide">已通过</span></td>
+                    <td class="px-4 py-3 text-right"><a class="text-primary text-xs hover:underline">查看</a></td>
+                  </tr>
+                  <!-- 行5 -->
+                  <tr class="border-b border-border bg-card hover:bg-muted cursor-pointer">
+                    <td class="px-4 py-3 numeric text-xs text-foreground">LOG-2026-0716-04</td>
+                    <td class="px-4 py-3 text-foreground">机械手E-09</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center gap-1 text-xs text-primary"><i data-lucide="package-plus" class="w-3.5 h-3.5"></i>安装</span></td>
+                    <td class="px-4 py-3 text-foreground">赵工</td>
+                    <td class="px-4 py-3 numeric text-xs text-muted-foreground">2026-07-16 11:20</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 border border-state-error text-state-error text-[11px] tracking-wide">已驳回</span></td>
+                    <td class="px-4 py-3 text-right"><a class="text-primary text-xs hover:underline">查看</a></td>
+                  </tr>
+                  <!-- 行6 -->
+                  <tr class="bg-card hover:bg-muted cursor-pointer">
+                    <td class="px-4 py-3 numeric text-xs text-foreground">LOG-2026-0715-02</td>
+                    <td class="px-4 py-3 text-foreground">冷却塔F-02</td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center gap-1 text-xs text-state-info"><i data-lucide="gauge" class="w-3.5 h-3.5"></i>校准</span></td>
+                    <td class="px-4 py-3 text-foreground">李工</td>
+                    <td class="px-4 py-3 numeric text-xs text-muted-foreground">2026-07-15 09:00</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 border border-state-success text-state-success text-[11px] tracking-wide">已通过</span></td>
+                    <td class="px-4 py-3 text-right"><a class="text-primary text-xs hover:underline">查看</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="flex items-center justify-between px-4 py-3 border-t border-border">
+              <div class="text-xs text-muted-foreground">
+                共 <span class="numeric text-foreground">248</span> 条 · 第 <span class="numeric text-foreground">1</span> / <span class="numeric text-foreground">42</span> 页
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center text-muted-foreground hover:bg-muted">
+                  <i data-lucide="chevrons-left" class="w-4 h-4"></i>
+                </button>
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center text-muted-foreground hover:bg-muted">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button class="w-8 h-8 border border-primary bg-primary text-primary-foreground inline-flex items-center justify-center numeric text-xs">1</button>
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center numeric text-xs text-foreground hover:bg-muted">2</button>
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center numeric text-xs text-foreground hover:bg-muted">3</button>
+                <span class="text-muted-foreground px-1 numeric text-xs">…</span>
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center numeric text-xs text-foreground hover:bg-muted">42</button>
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center text-muted-foreground hover:bg-muted">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+                <button class="w-8 h-8 border border-border bg-card inline-flex items-center justify-center text-muted-foreground hover:bg-muted">
+                  <i data-lucide="chevrons-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </section>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

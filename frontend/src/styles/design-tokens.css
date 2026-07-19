@@ -1,72 +1,96 @@
 /* ============================================================
-   设备信息动态管理系统 — Design Tokens v3.0
-   设计哲学: Industrial Minimalism (工业极简主义)
-   参考: Ant Design + Material Design
-   更新: 2026-07-13 UI Redesign
+   设备信息动态管理系统 — Design Tokens v5.0
+   设计风格: Modern Minimal (现代简约风 · 方案A)
+   设计哲学: 克制、理性、留白；单一石板蓝主色 + 中性灰阶；
+            细线分隔、无阴影静态卡片、紧凑理性的信息层级。
+   更新: 2026-07-18 方案A落地
    ============================================================ */
 
 /* -------- LIGHT THEME (Default) -------- */
 :root {
   /* ========== Color Palette - Slate Blue Primary ========== */
 
-  /* Primary — Slate Blue (石板蓝) */
-  --color-primary-50:  #F8FAFC;
-  --color-primary-100: #F1F5F9;
-  --color-primary-200: #E2E8F0;
-  --color-primary-300: #CBD5E1;
-  --color-primary-400: #94A3B8;
-  --color-primary-500: #64748B;   /* ★ 主色 */
-  --color-primary-600: #475569;
-  --color-primary-700: #334155;
-  --color-primary-800: #1E293B;
-  --color-primary-900: #0F172A;
+  /* Primary — Slate Blue (石板蓝) v5.0 · 方案A */
+  --navy-50:  #EFF6FF;
+  --navy-100: #DBEAFE;
+  --navy-200: #BFDBFE;
+  --navy-300: #93C5FD;
+  --navy-400: #60A5FA;
+  --navy-500: #3B82F6;   /* 次级强调 */
+  --navy-600: #2563EB;   /* ★ 主色 */
+  --navy-700: #1D4ED8;   /* 主色深 / 按下态 */
+  --navy-800: #1E40AF;
+  --navy-900: #1E3A8A;
+  --navy-950: #172554;
 
-  /* Accent — Sky blue (subtle) */
-  --color-accent-50:  #F0F9FF;
-  --color-accent-100: #E0F2FE;
-  --color-accent-200: #BAE6FD;
-  --color-accent-300: #7DD3FC;
-  --color-accent-400: #38BDF8;
-  --color-accent-500: #0EA5E9;
-  --color-accent-600: #0284C7;
+  /* Accent — 保留变量名兼容，方案A不使用强调色 */
+  --amber-50:  #EFF6FF;
+  --amber-100: #DBEAFE;
+  --amber-200: #BFDBFE;
+  --amber-300: #93C5FD;
+  --amber-400: #60A5FA;
+  --amber-500: #3B82F6;
+  --amber-600: #2563EB;
+  --amber-700: #1D4ED8;
 
-  /* Neutral — Monochrome (纯净单色系) */
+  /* Primary mapping (兼容 v3.0 变量名) */
+  --color-primary-50:  var(--navy-50);
+  --color-primary-100: var(--navy-100);
+  --color-primary-200: var(--navy-200);
+  --color-primary-300: var(--navy-300);
+  --color-primary-400: var(--navy-400);
+  --color-primary-500: var(--navy-500);
+  --color-primary-600: var(--navy-600);   /* ★ 主色 */
+  --color-primary-700: var(--navy-700);
+  --color-primary-800: var(--navy-800);
+  --color-primary-900: var(--navy-900);
+
+  /* Accent mapping */
+  --color-accent-50:  var(--navy-50);
+  --color-accent-100: var(--navy-100);
+  --color-accent-200: var(--navy-200);
+  --color-accent-300: var(--navy-300);
+  --color-accent-400: var(--navy-400);
+  --color-accent-500: var(--navy-500);
+  --color-accent-600: var(--navy-600);
+
+  /* Neutral — Slate Gray (石板灰阶，偏冷) */
   --color-neutral-0:   #FFFFFF;
-  --color-neutral-50:  #FAFAFA;
-  --color-neutral-100: #F5F5F5;
-  --color-neutral-200: #E5E5E5;
-  --color-neutral-300: #D4D4D4;
-  --color-neutral-400: #A3A3A3;
-  --color-neutral-500: #737373;
-  --color-neutral-600: #525252;
-  --color-neutral-700: #404040;
-  --color-neutral-800: #262626;
-  --color-neutral-900: #171717;
+  --color-neutral-50:  #F8FAFC;
+  --color-neutral-100: #F1F5F9;
+  --color-neutral-200: #E2E8F0;
+  --color-neutral-300: #CBD5E1;
+  --color-neutral-400: #94A3B8;
+  --color-neutral-500: #64748B;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1E293B;
+  --color-neutral-900: #0F172A;
 
   /* Semantic — Status colors (克制使用) */
-  --color-success-50:  #ECFDF5;
-  --color-success-100: #D1FAE5;
-  --color-success-200: #A7F3D0;
-  --color-success-400: #34D399;
-  --color-success-500: #10B981;
-  --color-success-600: #059669;
-  --color-success-700: #047857;
+  --color-success-50:  #F0FDF4;
+  --color-success-100: #DCFCE7;
+  --color-success-200: #BBF7D0;
+  --color-success-400: #4ADE80;
+  --color-success-500: #16A34A;
+  --color-success-600: #15803D;
+  --color-success-700: #166534;
 
   --color-warning-50:  #FFFBEB;
   --color-warning-100: #FEF3C7;
   --color-warning-200: #FDE68A;
   --color-warning-400: #FBBF24;
-  --color-warning-500: #F59E0B;
-  --color-warning-600: #D97706;
-  --color-warning-700: #B45309;
+  --color-warning-500: #D97706;
+  --color-warning-600: #B45309;
+  --color-warning-700: #92400E;
 
   --color-danger-50:  #FEF2F2;
   --color-danger-100: #FEE2E2;
   --color-danger-200: #FECACA;
   --color-danger-400: #F87171;
-  --color-danger-500: #EF4444;
-  --color-danger-600: #DC2626;
-  --color-danger-700: #B91C1C;
+  --color-danger-500: #DC2626;
+  --color-danger-600: #B91C1C;
+  --color-danger-700: #991B1B;
 
   --color-info-50:  #EFF6FF;
   --color-info-100: #DBEAFE;
@@ -76,116 +100,132 @@
   --color-info-600: #2563EB;
   --color-info-700: #1D4ED8;
 
-  /* ========== Surface Colors (层次分明) ========== */
-  --surface-base:       #FFFFFF;   /* 基础背景 - 纯白 */
-  --surface-elevated:   #FAFAFA;   /* 提升一级 - 近白 */
-  --surface-overlay:    #FFFFFF;   /* 浮层 - 纯白卡片 */
-  --surface-sidebar:    #171717;   /* 侧边栏 - 近黑 */
-  --surface-sidebar-hover: #262626;
+  /* 图表色（方案A：主色阶 + 中性） */
+  --chart-1: #2563EB;
+  --chart-2: #60A5FA;
+  --chart-3: #93C5FD;
+  --chart-4: #64748B;
+  --chart-5: #CBD5E1;
+
+  /* ========== Surface Colors ========== */
+  --surface-base:       #FFFFFF;
+  --surface-page:       #F8FAFC;   /* 页面背景 - 极浅冷灰 */
+  --surface-elevated:   #F1F5F9;
+  --surface-overlay:    #FFFFFF;
+  --surface-card:       #FFFFFF;            /* 兼容别名 = overlay */
+  --surface-sidebar:    #FFFFFF;            /* 侧边栏 - 纯白 */
+  --surface-sidebar-hover: rgba(37, 99, 235, 0.06);  /* 蓝色淡 */
   --surface-input:      #FFFFFF;
-  --surface-hover:      #F5F5F5;   /* 悬浮 */
-  --surface-selected:   #F1F5F9;   /* 选中 */
-  --surface-disabled:   #F5F5F5;   /* 禁用 */
+  --surface-hover:      #F8FAFC;
+  --surface-selected:   var(--navy-50);       /* 选中 - 蓝色淡 */
+  --surface-disabled:   #F1F5F9;
 
   /* ========== Text Colors ========== */
-  --text-primary:   var(--color-neutral-900);
-  --text-secondary: var(--color-neutral-600);
-  --text-tertiary:  var(--color-neutral-400);
-  --text-disabled:  var(--color-neutral-300);
+  --text-primary:   var(--color-neutral-900);   /* #0F172A */
+  --text-secondary: var(--color-neutral-700);   /* #334155 */
+  --text-tertiary:  var(--color-neutral-500);   /* #64748B */
+  --text-disabled:  var(--color-neutral-300);   /* #CBD5E1 */
   --text-inverse:   #FFFFFF;
-  --text-link:       var(--color-primary-600);
+  --text-link:       var(--color-primary-600);   /* #2563EB */
   --text-link-hover: var(--color-primary-700);
 
   /* ========== Border Colors ========== */
-  --border-default: var(--color-neutral-200);
-  --border-strong:  var(--color-neutral-300);
-  --border-hover:   var(--color-primary-300);
-  --border-focus:   var(--color-primary-500);
+  --border-default: #E2E8F0;
+  --border-strong:  #CBD5E1;
+  --border-hover:   var(--color-primary-400);
+  --border-focus:   var(--color-primary-600);
 
-  /* ========== Shadow System (细腻层次) ========== */
-  --shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  --shadow-sm:    0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
-  --shadow-md:    0 4px 8px -2px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
-  --shadow-lg:    0 12px 24px -4px rgba(0, 0, 0, 0.05), 0 4px 8px -4px rgba(0, 0, 0, 0.03);
-  --shadow-xl:    0 24px 48px -8px rgba(0, 0, 0, 0.06), 0 8px 16px -8px rgba(0, 0, 0, 0.03);
-  --shadow-2xl:   0 32px 64px -12px rgba(0, 0, 0, 0.08), 0 16px 32px -8px rgba(0, 0, 0, 0.04);
-  --shadow-card:  0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+  /* ========== Shadow System (方案A：克制，静态卡片无投影) ========== */
+  --shadow-xs:    none;
+  --shadow-sm:    none;
+  --shadow-md:    0 4px 12px rgba(15, 23, 42, 0.08);    /* 仅浮层 */
+  --shadow-lg:    0 8px 24px rgba(15, 23, 42, 0.10);    /* 仅浮层 */
+  --shadow-xl:    0 12px 32px rgba(15, 23, 42, 0.12);   /* 仅浮层 */
+  --shadow-2xl:   0 16px 48px rgba(15, 23, 42, 0.16);   /* 仅弹窗 */
+  --shadow-card:  none;    /* ★ 方案A：静态卡片无投影 */
+  --shadow-inner: none;
 
-  /* ========== Typography (系统字体栈) ========== */
-  --font-sans:  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                'Helvetica Neue', Arial, 'Noto Sans SC', 'PingFang SC',
-                'Microsoft YaHei', sans-serif;
-
-  --font-mono:  'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
-                Consolas, 'Courier New', monospace;
-
+  /* ========== Typography ========== */
+  --font-sans:  'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont,
+                'Segoe UI', system-ui, sans-serif;
+  --font-mono:  'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
   --font-display: var(--font-sans);
 
   --font-normal:   400;
-  --font-medium:   500;      /* 按钮、标签 */
-  --font-semibold: 600;      /* 小标题 */
-  --font-bold:     700;      /* 大标题 */
+  --font-medium:   500;
+  --font-semibold: 600;
+  --font-bold:     700;
 
-  /* 字号系统 (16px基准) */
-  --text-xs:   0.75rem;      /* 12px - 辅助文字 */
-  --text-sm:   0.875rem;     /* 14px - 次要信息 */
-  --text-base: 1rem;         /* 16px - 正文 ★ */
-  --text-md:   1.125rem;     /* 18px - 强调文本 */
-  --text-lg:   1.25rem;      /* 20px - 小标题 */
-  --text-xl:   1.5rem;       /* 24px - 卡片标题 */
-  --text-2xl:  2rem;         /* 32px - 区块标题 */
-  --text-3xl:  2.5rem;       /* 40px - 页面标题 */
-  --text-4xl:  3rem;         /* 48px - 特殊标题 */
+  /* 字体权重别名（兼容 v3.0 变量名） */
+  --font-weight-normal:   var(--font-normal);
+  --font-weight-medium:  var(--font-medium);
+  --font-weight-semibold: var(--font-semibold);
+  --font-weight-bold:    var(--font-bold);
+  /* 短别名（兼容 .vue 文件） */
+  --font-w-normal:   var(--font-normal);
+  --font-w-medium:   var(--font-medium);
+  --font-w-semibold: var(--font-semibold);
+  --font-w-bold:     var(--font-bold);
 
-  --leading-tight:   1.25;   /* 大标题 */
-  --leading-normal:  1.5;    /* 正文 ★ */
-  --leading-relaxed: 1.75;   /* 长文本 */
+  /* 字号系统 */
+  --text-xs:   0.75rem;      /* 12px */
+  --text-sm:   0.875rem;     /* 14px */
+  --text-base: 1rem;         /* 16px */
+  --text-md:   1.125rem;     /* 18px */
+  --text-lg:   1.25rem;      /* 20px */
+  --text-xl:   1.5rem;       /* 24px */
+  --text-2xl:  2rem;         /* 32px */
+  --text-3xl:  2.5rem;       /* 40px */
+  --text-4xl:  3rem;         /* 48px */
 
-  /* ========== Border Radius (更柔和) ========== */
+  --leading-tight:   1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.75;
+
+  /* ========== Border Radius (方案A：克制偏小) ========== */
   --radius-none: 0;
   --radius-sm:   0.5rem;     /* 8px - 按钮、输入框 */
-  --radius-md:   0.75rem;    /* 12px - 卡片、面板 */
-  --radius-lg:   1rem;       /* 16px - 对话框 */
-  --radius-xl:   1.5rem;     /* 24px - 大型浮层 */
-  --radius-2xl:  2rem;       /* 32px - 特殊容器 */
-  --radius-full: 9999px;     /* 胶囊/圆形 */
+  --radius-md:   0.5rem;     /* 8px - 卡片（方案A克制） */
+  --radius-lg:   0.75rem;    /* 12px - 对话框 */
+  --radius-xl:   1rem;       /* 16px */
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
 
   /* ========== Spacing Scale (8px基准) ========== */
   --space-0:   0;
-  --space-0-5: 0.125rem;     /* 2px  */
-  --space-1:   0.25rem;      /* 4px  */
-  --space-1-5: 0.375rem;     /* 6px  */
-  --space-2:   0.5rem;       /* 8px  ★ */
+  --space-0-5: 0.125rem;
+  --space-1:   0.25rem;
+  --space-1-5: 0.375rem;
+  --space-2:   0.5rem;       /* 8px */
   --space-3:   0.75rem;      /* 12px */
   --space-4:   1rem;         /* 16px */
-  --space-5:   1.5rem;       /* 24px ★ */
-  --space-6:   2rem;         /* 32px ★ */
-  --space-8:   3rem;         /* 48px ★ */
-  --space-10:  4rem;         /* 64px */
-  --space-12:  5rem;         /* 80px */
-  --space-16:  6rem;         /* 96px */
-  --space-20:  8rem;         /* 128px */
+  --space-5:   1.5rem;       /* 24px */
+  --space-6:   2rem;         /* 32px */
+  --space-8:   3rem;         /* 48px */
+  --space-10:  4rem;
+  --space-12:  5rem;
+  --space-16:  6rem;
+  --space-20:  8rem;
 
-  /* ========== Transitions (Material Design) ========== */
-  --ease-default:  cubic-bezier(0.4, 0.0, 0.2, 1);    /* 标准进出 */
-  --ease-in:       cubic-bezier(0.4, 0.0, 1.0, 1.0);   /* 进入 */
-  --ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1.0);   /* 离开 */
-  --ease-bounce:   cubic-bezier(0.34, 1.56, 0.64, 1);  /* 弹性 */
+  /* ========== Transitions ========== */
+  --ease-default:  cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-in:       cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-bounce:   cubic-bezier(0.34, 1.56, 0.64, 1);
 
   --duration-fast:   150ms;
-  --duration-normal: 250ms;
-  --duration-slow:   350ms;
+  --duration-normal: 200ms;
+  --duration-slow:   300ms;
 
   --transition-fast: all var(--duration-fast) var(--ease-default);
   --transition-base: all var(--duration-normal) var(--ease-default);
   --transition-slow: all var(--duration-slow) var(--ease-default);
 
   /* ========== Layout ========== */
-  --sidebar-width:      240px;
+  --sidebar-width:      224px;     /* 方案A w-56 */
   --sidebar-collapsed:  64px;
-  --header-height:      56px;
-  --content-max-width:  1400px;
+  --header-height:      56px;      /* h-14 */
+  --content-max-width:  1440px;
 
   /* ========== Z-Index Scale ========== */
   --z-dropdown:  1000;
@@ -195,105 +235,107 @@
   --z-toast:     1400;
 }
 
-/* -------- DARK THEME (Deep Gray) -------- */
+/* -------- DARK THEME -------- */
 [data-theme="dark"],
 .dark {
-  /* ========== Surface Colors (深灰调) ========== */
-  --surface-base:       #1A1A2E;   /* 基础背景 - 深灰 */
-  --surface-elevated:   #25253E;   /* 提升一级 */
-  --surface-overlay:    #1E1E3A;   /* 浮层 */
-  --surface-sidebar:    #0F0F23;   /* 侧边栏 - 更深 */
-  --surface-sidebar-hover: #1E1E3A;
-  --surface-input:      #25253E;
-  --surface-hover:      #2A2A45;   /* 悬浮 */
-  --surface-selected:   #312E81;   /* 选中 - 带紫色调 */
-  --surface-disabled:   #1A1A2E;
+  --surface-base:       #0F172A;
+  --surface-page:       #0B1120;
+  --surface-elevated:   #1E293B;
+  --surface-overlay:    #1E293B;
+  --surface-sidebar:    #0F172A;
+  --surface-sidebar-hover: rgba(59, 130, 246, 0.12);
+  --surface-input:      #1E293B;
+  --surface-hover:      #1E293B;
+  --surface-selected:   #1E3A8A;
+  --surface-disabled:   #1E293B;
 
-  /* ========== Text Colors ========== */
-  --text-primary:   #E8E8ED;
-  --text-secondary: #A0A0B8;
-  --text-tertiary:  #606080;
-  --text-disabled:  #404060;
-  --text-inverse:   #0F0F23;
-  --text-link:      #818CF8;
-  --text-link-hover: #A5B4FC;
+  --text-primary:   #E2E8F0;
+  --text-secondary: #CBD5E1;
+  --text-tertiary:  #94A3B8;
+  --text-disabled:  #475569;
+  --text-inverse:   #0F172A;
+  --text-link:      #60A5FA;
+  --text-link-hover: #93C5FD;
 
-  /* ========== Border Colors ========== */
-  --border-default: #2A2A45;
-  --border-strong:  #3A3A55;
-  --border-hover:   var(--color-primary-400);
+  --border-default: #1E293B;
+  --border-strong:  #334155;
+  --border-hover:   var(--color-primary-500);
   --border-focus:   var(--color-primary-500);
 
-  /* ========== Shadow System (加深) ========== */
-  --shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, 0.2);
-  --shadow-sm:    0 2px 4px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
-  --shadow-md:    0 4px 8px -2px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
-  --shadow-lg:    0 12px 24px -4px rgba(0, 0, 0, 0.35), 0 4px 8px -4px rgba(0, 0, 0, 0.2);
-  --shadow-xl:    0 24px 48px -8px rgba(0, 0, 0, 0.4), 0 8px 16px -8px rgba(0, 0, 0, 0.2);
-  --shadow-2xl:   0 32px 64px -12px rgba(0, 0, 0, 0.5), 0 16px 32px -8px rgba(0, 0, 0, 0.3);
-  --shadow-card:  0 1px 3px 0 rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.15);
+  --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg:    0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl:    0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow-2xl:   0 16px 48px rgba(0, 0, 0, 0.7);
+  --shadow-card:  none;
 }
 
 
 /* ============================================================
-   Element Plus 全局主题覆盖 (Light)
+   Element Plus 全局主题覆盖 (方案A · 现代简约)
    ============================================================ */
 :root {
   /* Primary */
-  --el-color-primary: var(--color-primary-600);
-  --el-color-primary-light-3: var(--color-primary-400);
-  --el-color-primary-light-5: var(--color-primary-300);
-  --el-color-primary-light-7: var(--color-primary-200);
-  --el-color-primary-light-8: var(--color-primary-100);
-  --el-color-primary-light-9: var(--color-primary-50);
-  --el-color-primary-dark-2: var(--color-primary-800);
+  --el-color-primary: #2563EB;
+  --el-color-primary-light-3: #60A5FA;
+  --el-color-primary-light-5: #93C5FD;
+  --el-color-primary-light-7: #BFDBFE;
+  --el-color-primary-light-8: #DBEAFE;
+  --el-color-primary-light-9: #EFF6FF;
+  --el-color-primary-dark-2: #1D4ED8;
 
   /* Success */
-  --el-color-success: var(--color-success-500);
-  --el-color-success-light-3: var(--color-success-400);
-  --el-color-success-light-5: var(--color-success-200);
-  --el-color-success-light-7: var(--color-success-100);
-  --el-color-success-light-9: var(--color-success-50);
+  --el-color-success: #16A34A;
+  --el-color-success-light-3: #4ADE80;
+  --el-color-success-light-5: #86EFAC;
+  --el-color-success-light-7: #BBF7D0;
+  --el-color-success-light-9: #F0FDF4;
 
   /* Warning */
-  --el-color-warning: var(--color-warning-500);
-  --el-color-warning-light-3: var(--color-warning-400);
-  --el-color-warning-light-5: var(--color-warning-200);
-  --el-color-warning-light-7: var(--color-warning-100);
-  --el-color-warning-light-9: var(--color-warning-50);
+  --el-color-warning: #D97706;
+  --el-color-warning-light-3: #FBBF24;
+  --el-color-warning-light-5: #FCD34D;
+  --el-color-warning-light-7: #FDE68A;
+  --el-color-warning-light-9: #FFFBEB;
 
   /* Danger */
-  --el-color-danger: var(--color-danger-500);
-  --el-color-danger-light-3: var(--color-danger-400);
-  --el-color-danger-light-5: var(--color-danger-200);
-  --el-color-danger-light-7: var(--color-danger-100);
-  --el-color-danger-light-9: var(--color-danger-50);
+  --el-color-danger: #DC2626;
+  --el-color-danger-light-3: #F87171;
+  --el-color-danger-light-5: #FCA5A5;
+  --el-color-danger-light-7: #FECACA;
+  --el-color-danger-light-9: #FEF2F2;
 
   /* Info */
-  --el-color-info: var(--color-info-500);
-  --el-color-info-light-3: var(--color-info-400);
-  --el-color-info-light-5: var(--color-info-200);
-  --el-color-info-light-7: var(--color-info-100);
-  --el-color-info-light-9: var(--color-info-50);
+  --el-color-info: #2563EB;
+  --el-color-info-light-3: #60A5FA;
+  --el-color-info-light-5: #93C5FD;
+  --el-color-info-light-7: #BFDBFE;
+  --el-color-info-light-9: #EFF6FF;
 
   /* Text colors */
   --el-text-color-primary: var(--text-primary);
   --el-text-color-regular: var(--text-secondary);
   --el-text-color-secondary: var(--text-tertiary);
-  --el-text-color-placeholder: var(--text-disabled);
+  --el-text-color-placeholder: var(--text-tertiary);
 
   /* Border */
   --el-border-color: var(--border-default);
   --el-border-color-light: var(--border-default);
-  --el-border-color-lighter: var(--border-default);
+  --el-border-color-lighter: #F1F5F9;
   --el-border-radius-base: var(--radius-md);
   --el-border-radius-small: var(--radius-sm);
 
   /* Background */
-  --el-bg-color: var(--surface-card);
+  --el-bg-color: #FFFFFF;
   --el-bg-color-page: var(--surface-page);
   --el-bg-color-overlay: var(--surface-overlay);
 
   /* Font */
   --el-font-family: var(--font-sans);
+  --el-font-size-base: 14px;
+
+  /* Fill */
+  --el-fill-color: #F1F5F9;
+  --el-fill-color-light: #F8FAFC;
+  --el-fill-color-lighter: #F8FAFC;
+  --el-fill-color-blank: #FFFFFF;
 }

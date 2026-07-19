@@ -2,7 +2,7 @@
   <div class="equipment-page">
     <div class="page-header">
       <h2>设备管理</h2>
-      <el-button type="primary" @click="handleAdd">
+      <el-button type="primary" @click="handleAdd" v-if="userStore.isAdmin">
         <el-icon><Plus /></el-icon>
         新增设备
       </el-button>
@@ -44,38 +44,40 @@
         v-loading="loading"
         class="w-full"
       >
-        <el-table-column prop="code" label="设备编号" width="150" />
-        <el-table-column prop="name" label="设备名称" min-width="150" />
-        <el-table-column prop="model" label="型号" width="150" />
-        <el-table-column prop="location" label="位置" width="150" />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="code" label="设备编号" min-width="120" show-overflow-tooltip />
+        <el-table-column prop="name" label="设备名称" min-width="140" show-overflow-tooltip />
+        <el-table-column prop="model" label="型号" min-width="100" show-overflow-tooltip />
+        <el-table-column prop="location" label="位置" min-width="100" show-overflow-tooltip />
+        <el-table-column prop="status" label="状态" min-width="80" align="center">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.status)">
               {{ getStatusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="lifecycle_status" label="生命周期" width="100">
+        <el-table-column prop="lifecycle_status" label="生命周期" min-width="90" align="center">
           <template #default="{ row }">
             <el-tag type="info">{{ getLifecycleLabel(row.lifecycle_status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="180">
+        <el-table-column prop="created_at" label="创建时间" min-width="150" align="center">
           <template #default="{ row }">
             {{ formatDate(row.created_at) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" min-width="180" fixed="right" align="center">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleView(row)">
-              查看
-            </el-button>
-            <el-button type="warning" size="small" @click="handleEdit(row)" v-if="userStore.isAdmin">
-              编辑
-            </el-button>
-            <el-button type="danger" size="small" @click="handleDelete(row)" v-if="userStore.isAdmin">
-              删除
-            </el-button>
+            <div class="table-actions">
+              <el-button type="primary" size="small" @click="handleView(row)">
+                查看
+              </el-button>
+              <el-button type="warning" size="small" @click="handleEdit(row)" v-if="userStore.isAdmin">
+                编辑
+              </el-button>
+              <el-button type="danger" size="small" @click="handleDelete(row)" v-if="userStore.isAdmin">
+                删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -397,12 +399,39 @@ const handleDelete = async (row: any) => {
       }
     )
 
-    await deleteEquipment(row.id)
-    ElMessage.success('删除成功')
-    fetchEquipments()
+    try {
+      await deleteEquipment(row.id)
+      ElMessage.success('删除成功')
+      fetchEquipments()
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail || ''
+      // 识别"有关联日志"错误，提供强制删除二次确认
+      if (detail.includes('关联日志')) {
+        try {
+          await ElMessageBox.confirm(
+            `${detail}\n\n强制删除将一并清除该设备的所有日志记录，是否继续？`,
+            '需要确认',
+            {
+              confirmButtonText: '强制删除',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }
+          )
+          await deleteEquipment(row.id, true)
+          ElMessage.success('删除成功')
+          fetchEquipments()
+        } catch (e2: any) {
+          if (e2 !== 'cancel') {
+            ElMessage.error(e2?.response?.data?.detail || '删除失败')
+          }
+        }
+      } else {
+        ElMessage.error(detail || '删除失败')
+      }
+    }
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error?.message || '删除失败')
+      ElMessage.error(error?.response?.data?.detail || '删除失败')
     }
   }
 }
@@ -511,6 +540,19 @@ onMounted(() => {
 
 .table-card :deep(.el-table__cell) {
   padding: var(--space-4) var(--space-5);
+}
+
+/* 操作列按钮始终一行显示，不换行 */
+.table-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.table-actions .el-button {
+  margin-left: 0;
+  flex-shrink: 0;
 }
 
 /* 分页 */

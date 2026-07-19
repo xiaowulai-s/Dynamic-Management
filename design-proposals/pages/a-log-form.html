@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新建日志 · 现代简约</title>
+    <style id="theme-vars">
+/* ============================================================
+   方案 A · 现代简约风 (Modern Minimal)
+   设计理念：克制、理性、留白；单一品牌主色 + 中性灰阶；
+   细线分隔、无阴影静态卡片、紧凑理性的信息层级。
+   适合：注重效率与信息密度的企业内网后台。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+:root {
+  /* —— 品牌主色：石板蓝（单一色相，仅明度阶）—— */
+  --primary-50:  #EFF6FF;
+  --primary-100: #DBEAFE;
+  --primary-500: #3B82F6;
+  --primary-600: #2563EB;
+  --primary-700: #1D4ED8;
+
+  /* —— 中性灰阶 —— */
+  --gray-50:  #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-900: #0F172A;
+
+  /* —— 语义别名（prefixless，供 fill-html-head 映射）—— */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #2563EB;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #334155;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #EFF6FF;
+  --accent-foreground: #1D4ED8;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #2563EB;
+
+  /* —— 圆角：克制偏小 —— */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* —— 状态色 —— */
+  --state-success: #16A34A;
+  --state-warning: #D97706;
+  --state-error:   #DC2626;
+  --state-info:    #2563EB;
+
+  /* —— 图表色（主色阶 + 中性）—— */
+  --chart-1: #2563EB;
+  --chart-2: #60A5FA;
+  --chart-3: #93C5FD;
+  --chart-4: #64748B;
+  --chart-5: #CBD5E1;
+
+  /* —— 字体 —— */
+  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-serif: var(--font-sans);
+
+  /* —— 阴影：静态卡片不投影，仅浮层使用 —— */
+  --shadow-card: none;
+  --shadow-popover: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-drawer: -8px 0 24px rgba(15, 23, 42, 0.10);
+
+  /* —— 间距与密度 —— */
+  --space-page: 24px;
+  --space-card: 20px;
+  --density: 3;
+}
+
+html.light, html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  letter-spacing: -0.005em;
+}
+
+/* 简约风：细线分隔的卡片，无投影 */
+.card-minimal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* 等宽数字用于 KPI */
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-card-foreground { background-color: var(--card-foreground); }
+      .text-card-foreground { color: var(--card-foreground); }
+      .border-card-foreground { border-color: var(--card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--card-foreground); }
+      .bg-popover { background-color: var(--popover); }
+      .text-popover { color: var(--popover); }
+      .border-popover { border-color: var(--popover); }
+      .ring-popover { --tw-ring-color: var(--popover); }
+      .bg-popover-foreground { background-color: var(--popover-foreground); }
+      .text-popover-foreground { color: var(--popover-foreground); }
+      .border-popover-foreground { border-color: var(--popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--popover-foreground); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-primary-foreground { background-color: var(--primary-foreground); }
+      .text-primary-foreground { color: var(--primary-foreground); }
+      .border-primary-foreground { border-color: var(--primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--primary-foreground); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-secondary-foreground { background-color: var(--secondary-foreground); }
+      .text-secondary-foreground { color: var(--secondary-foreground); }
+      .border-secondary-foreground { border-color: var(--secondary-foreground); }
+      .ring-secondary-foreground { --tw-ring-color: var(--secondary-foreground); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-accent { background-color: var(--accent); }
+      .text-accent { color: var(--accent); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+      .bg-accent-foreground { background-color: var(--accent-foreground); }
+      .text-accent-foreground { color: var(--accent-foreground); }
+      .border-accent-foreground { border-color: var(--accent-foreground); }
+      .ring-accent-foreground { --tw-ring-color: var(--accent-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-destructive-foreground { background-color: var(--destructive-foreground); }
+      .text-destructive-foreground { color: var(--destructive-foreground); }
+      .border-destructive-foreground { border-color: var(--destructive-foreground); }
+      .ring-destructive-foreground { --tw-ring-color: var(--destructive-foreground); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+      .bg-input { background-color: var(--input); }
+      .text-input { color: var(--input); }
+      .border-input { border-color: var(--input); }
+      .ring-input { --tw-ring-color: var(--input); }
+      .bg-ring { background-color: var(--ring); }
+      .text-ring { color: var(--ring); }
+      .border-ring { border-color: var(--ring); }
+      .ring-ring { --tw-ring-color: var(--ring); }
+      .bg-chart-1 { background-color: var(--chart-1); }
+      .text-chart-1 { color: var(--chart-1); }
+      .border-chart-1 { border-color: var(--chart-1); }
+      .ring-chart-1 { --tw-ring-color: var(--chart-1); }
+      .bg-chart-2 { background-color: var(--chart-2); }
+      .text-chart-2 { color: var(--chart-2); }
+      .border-chart-2 { border-color: var(--chart-2); }
+      .ring-chart-2 { --tw-ring-color: var(--chart-2); }
+      .bg-chart-3 { background-color: var(--chart-3); }
+      .text-chart-3 { color: var(--chart-3); }
+      .border-chart-3 { border-color: var(--chart-3); }
+      .ring-chart-3 { --tw-ring-color: var(--chart-3); }
+      .bg-chart-4 { background-color: var(--chart-4); }
+      .text-chart-4 { color: var(--chart-4); }
+      .border-chart-4 { border-color: var(--chart-4); }
+      .ring-chart-4 { --tw-ring-color: var(--chart-4); }
+      .bg-chart-5 { background-color: var(--chart-5); }
+      .text-chart-5 { color: var(--chart-5); }
+      .border-chart-5 { border-color: var(--chart-5); }
+      .ring-chart-5 { --tw-ring-color: var(--chart-5); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main data-viewport-mode="app-shell" class="h-screen overflow-hidden min-h-0 flex bg-background text-foreground">
+      <!-- 侧栏 -->
+      <aside class="w-60 shrink-0 border-r border-border bg-card flex flex-col">
+        <div class="h-14 flex items-center gap-2.5 px-4 border-b border-border">
+          <div class="w-8 h-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center">
+            <i data-lucide="activity" class="w-4 h-4"></i>
+          </div>
+          <div class="leading-tight min-w-0">
+            <div class="text-[13px] font-semibold text-foreground truncate">设备信息动态</div>
+            <div class="text-[11px] text-muted-foreground truncate">管理系统</div>
+          </div>
+        </div>
+        <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i><span>仪表盘</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="server" class="w-4 h-4 shrink-0"></i><span>设备管理</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm bg-accent text-accent-foreground font-medium">
+            <i data-lucide="clipboard-list" class="w-4 h-4 shrink-0"></i><span>日志管理</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0"></i><span>统计分析</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="upload" class="w-4 h-4 shrink-0"></i><span>批量上传</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="bell" class="w-4 h-4 shrink-0"></i><span>通知中心</span>
+          </a>
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            <i data-lucide="settings" class="w-4 h-4 shrink-0"></i><span>系统设置</span>
+          </a>
+        </nav>
+        <div class="p-3 border-t border-border">
+          <div class="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-muted cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xs font-semibold">张</div>
+            <div class="leading-tight min-w-0 flex-1">
+              <div class="text-sm font-medium text-foreground truncate">张工</div>
+              <div class="text-[11px] text-muted-foreground truncate">现场工程师</div>
+            </div>
+            <i data-lucide="chevrons-up-down" class="w-4 h-4 text-muted-foreground shrink-0"></i>
+          </div>
+        </div>
+      </aside>
+      <!-- 主区 -->
+      <div class="flex-1 min-w-0 flex flex-col">
+        <header class="h-14 shrink-0 border-b border-border bg-card flex items-center gap-3 px-4">
+          <button class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground" aria-label="折叠侧栏">
+            <i data-lucide="panel-left" class="w-4 h-4"></i>
+          </button>
+          <div class="flex items-center gap-2 text-sm min-w-0">
+            <span class="text-muted-foreground shrink-0">日志管理</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-muted-foreground shrink-0"></i>
+            <span class="text-foreground font-medium truncate">新建日志</span>
+          </div>
+          <div class="ml-auto flex items-center gap-2">
+            <button class="relative w-9 h-9 flex items-center justify-center rounded-md border border-border hover:bg-muted text-muted-foreground" aria-label="通知">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full" style="background:var(--state-error);"></span>
+            </button>
+            <div class="w-px h-6 bg-border"></div>
+            <button class="w-9 h-9 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xs font-semibold">张</button>
+          </div>
+        </header>
+        <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto">
+          <div class="p-6">
+            <div class="max-w-[1200px] mx-auto">
+              <!-- 页头 + 顶部操作栏 -->
+              <div class="flex items-start justify-between gap-4 mb-5">
+                <div class="min-w-0">
+                  <h1 class="text-xl font-semibold text-foreground">新建日志</h1>
+                  <p class="text-sm text-muted-foreground mt-0.5">按步骤填写设备日志信息，提交后进入审核流程</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button data-dom-id="btn-back" class="h-9 px-3 flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i><span>返回</span>
+                  </button>
+                  <button type="button" class="h-9 px-4 border border-border rounded-md bg-card text-sm font-medium hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">保存草稿</button>
+                  <button type="submit" form="log-form" class="h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-ring">
+                    <i data-lucide="send" class="w-4 h-4"></i><span>提交</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 步骤指示器 -->
+              <div class="card-minimal p-4 mb-4">
+                <div class="flex items-center">
+                  <!-- Step 1 - 当前 -->
+                  <div class="flex items-center gap-2.5">
+                    <div class="relative">
+                      <span class="absolute inset-0 rounded-full bg-primary/30 animate-ping motion-reduce:animate-none"></span>
+                      <div class="relative w-8 h-8 rounded-full bg-card border-2 border-primary flex items-center justify-center text-xs font-semibold text-primary numeric">1</div>
+                    </div>
+                    <div class="hidden sm:block leading-tight">
+                      <div class="text-[11px] text-primary">步骤 1 · 进行中</div>
+                      <div class="text-sm font-medium text-foreground">基本信息</div>
+                    </div>
+                  </div>
+                  <div class="flex-1 h-px bg-border mx-3 min-w-[16px]"></div>
+                  <!-- Step 2 - 未完成 -->
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-card border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-400 numeric">2</div>
+                    <div class="hidden sm:block leading-tight">
+                      <div class="text-[11px] text-muted-foreground">步骤 2</div>
+                      <div class="text-sm text-muted-foreground">设备信息</div>
+                    </div>
+                  </div>
+                  <div class="flex-1 h-px bg-border mx-3 min-w-[16px]"></div>
+                  <!-- Step 3 - 未完成 -->
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-card border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-400 numeric">3</div>
+                    <div class="hidden sm:block leading-tight">
+                      <div class="text-[11px] text-muted-foreground">步骤 3</div>
+                      <div class="text-sm text-muted-foreground">处理详情</div>
+                    </div>
+                  </div>
+                  <div class="flex-1 h-px bg-border mx-3 min-w-[16px]"></div>
+                  <!-- Step 4 - 未完成 -->
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-card border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-400 numeric">4</div>
+                    <div class="hidden sm:block leading-tight">
+                      <div class="text-[11px] text-muted-foreground">步骤 4</div>
+                      <div class="text-sm text-muted-foreground">确认提交</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 成功提示占位（提交后状态预览） -->
+              <div class="rounded-md border p-3 flex items-start gap-2.5 mb-4" style="border-color:var(--state-success); background:rgba(22,163,74,0.06);">
+                <i data-lucide="check-circle-2" class="w-5 h-5 shrink-0 mt-0.5" style="color:var(--state-success)"></i>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-foreground">日志提交成功（状态预览）</div>
+                  <div class="text-xs text-muted-foreground mt-0.5">日志编号 <span class="numeric text-foreground">LG-20260718-0042</span> 已提交审核，预计 2 小时内反馈结果。</div>
+                </div>
+                <a href="#" class="text-xs text-primary hover:underline shrink-0 mt-0.5">查看详情</a>
+              </div>
+
+              <!-- 主体: 表单 + 提示侧栏 -->
+              <form id="log-form" class="grid grid-cols-1 lg:grid-cols-4 gap-5" onsubmit="return false;">
+                <div class="lg:col-span-3 space-y-4">
+                  <!-- 日志类型卡片网格 -->
+                  <div class="card-minimal p-5">
+                    <div class="flex items-center gap-2.5 mb-4">
+                      <div class="w-1 h-4 rounded-sm bg-primary"></div>
+                      <h2 class="text-sm font-semibold text-foreground">日志类型</h2>
+                      <span class="text-xs text-muted-foreground">选择后右侧显示对应填写要点</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="package-plus" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">安装</div>
+                        <div class="text-xs text-muted-foreground">新设备安装调试</div>
+                      </button>
+                      <button type="button" class="flex flex-col items-start gap-1.5 p-3 border border-primary bg-accent rounded-md text-left relative">
+                        <i data-lucide="check" class="w-3.5 h-3.5 absolute top-2 right-2 text-accent-foreground"></i>
+                        <i data-lucide="wrench" class="w-5 h-5 text-accent-foreground"></i>
+                        <div class="text-sm font-medium text-accent-foreground">维修</div>
+                        <div class="text-xs text-accent-foreground/75">设备故障修复</div>
+                      </button>
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="trash-2" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">报废</div>
+                        <div class="text-xs text-muted-foreground">设备报废登记</div>
+                      </button>
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="clipboard-check" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">巡检</div>
+                        <div class="text-xs text-muted-foreground">例行巡检记录</div>
+                      </button>
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">保养</div>
+                        <div class="text-xs text-muted-foreground">定期保养维护</div>
+                      </button>
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">故障</div>
+                        <div class="text-xs text-muted-foreground">突发故障上报</div>
+                      </button>
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="package" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">配件</div>
+                        <div class="text-xs text-muted-foreground">配件领用记录</div>
+                      </button>
+                      <button type="button" class="group flex flex-col items-start gap-1.5 p-3 border border-input rounded-md bg-card hover:bg-muted text-left transition-colors">
+                        <i data-lucide="gauge" class="w-5 h-5 text-muted-foreground group-hover:text-foreground"></i>
+                        <div class="text-sm font-medium text-foreground">校准</div>
+                        <div class="text-xs text-muted-foreground">精度校准测试</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 基本信息 -->
+                  <div class="card-minimal p-5">
+                    <div class="flex items-center gap-2.5 mb-4">
+                      <div class="w-1 h-4 rounded-sm bg-primary"></div>
+                      <span class="text-xs font-medium text-primary numeric">步骤 1</span>
+                      <h2 class="text-sm font-semibold text-foreground">基本信息</h2>
+                    </div>
+                    <div class="space-y-4">
+                      <!-- 日志标题（校验失败态） -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">日志标题 <span style="color:var(--state-error)">*</span></label>
+                        <input type="text" placeholder="请输入日志标题，如：空压机A-12压力异常维修" class="w-full h-10 px-3 text-sm rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring text-foreground" style="border:1px solid var(--state-error);">
+                        <p class="text-xs mt-1 flex items-center gap-1" style="color:var(--state-error)"><i data-lucide="alert-circle" class="w-3 h-3"></i>请输入日志标题</p>
+                      </div>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 日志类型（已选卡片回显） -->
+                        <div>
+                          <label class="block text-[13px] mb-1.5 text-muted-foreground">日志类型 <span style="color:var(--state-error)">*</span></label>
+                          <div class="h-10 px-3 flex items-center gap-2 rounded-md border border-primary bg-accent text-sm text-accent-foreground">
+                            <i data-lucide="wrench" class="w-4 h-4"></i><span>维修</span>
+                            <span class="ml-auto text-xs text-accent-foreground/70">已选择</span>
+                          </div>
+                        </div>
+                        <!-- 优先级 -->
+                        <div>
+                          <label class="block text-[13px] mb-1.5 text-muted-foreground">优先级 <span style="color:var(--state-error)">*</span></label>
+                          <div class="grid grid-cols-3 gap-2">
+                            <label class="flex items-center justify-center gap-1.5 h-10 border border-input rounded-md cursor-pointer hover:bg-muted text-sm text-muted-foreground">
+                              <input type="radio" name="priority" class="sr-only">
+                              <span class="w-2 h-2 rounded-full" style="background:var(--state-error)"></span>高
+                            </label>
+                            <label class="flex items-center justify-center gap-1.5 h-10 border border-primary bg-accent rounded-md cursor-pointer text-sm text-accent-foreground font-medium">
+                              <input type="radio" name="priority" checked class="sr-only">
+                              <span class="w-2 h-2 rounded-full" style="background:var(--state-warning)"></span>中
+                            </label>
+                            <label class="flex items-center justify-center gap-1.5 h-10 border border-input rounded-md cursor-pointer hover:bg-muted text-sm text-muted-foreground">
+                              <input type="radio" name="priority" class="sr-only">
+                              <span class="w-2 h-2 rounded-full bg-gray-300"></span>低
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- 关联工单（可选） -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">关联工单 <span class="text-muted-foreground/70">（可选）</span></label>
+                        <input type="text" placeholder="输入工单编号，如 WO-2026-0312" class="w-full h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 设备信息 -->
+                  <div class="card-minimal p-5">
+                    <div class="flex items-center gap-2.5 mb-4">
+                      <div class="w-1 h-4 rounded-sm bg-primary"></div>
+                      <span class="text-xs font-medium text-primary numeric">步骤 2</span>
+                      <h2 class="text-sm font-semibold text-foreground">设备信息</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <!-- 设备名称（下拉搜索 + 校验通过） -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">设备名称 <span style="color:var(--state-error)">*</span></label>
+                        <div class="relative">
+                          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"></i>
+                          <input type="text" value="空压机A-12" class="w-full h-10 pl-9 pr-9 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                          <i data-lucide="check-circle-2" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--state-success)"></i>
+                        </div>
+                      </div>
+                      <!-- 设备编号（自动带出） -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">设备编号</label>
+                        <input type="text" value="EQ-2024-0012" readonly class="w-full h-10 px-3 text-sm border border-input rounded-md bg-muted text-muted-foreground cursor-not-allowed numeric">
+                      </div>
+                      <!-- 设备位置（自动带出） -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">设备位置</label>
+                        <input type="text" value="一车间 / 压缩区" readonly class="w-full h-10 px-3 text-sm border border-input rounded-md bg-muted text-muted-foreground cursor-not-allowed">
+                      </div>
+                      <!-- 设备状态（显示） -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">设备状态</label>
+                        <div class="h-10 px-3 flex items-center gap-2 rounded-md border border-input bg-card text-sm">
+                          <span class="w-2 h-2 rounded-full" style="background:var(--state-success)"></span>
+                          <span class="text-foreground">运行中</span>
+                          <span class="ml-auto text-xs text-muted-foreground numeric">负载 68%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 处理详情 -->
+                  <div class="card-minimal p-5">
+                    <div class="flex items-center gap-2.5 mb-4">
+                      <div class="w-1 h-4 rounded-sm bg-primary"></div>
+                      <span class="text-xs font-medium text-primary numeric">步骤 3</span>
+                      <h2 class="text-sm font-semibold text-foreground">处理详情</h2>
+                    </div>
+                    <div class="space-y-4">
+                      <!-- 问题描述 -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">问题描述 <span style="color:var(--state-error)">*</span></label>
+                        <textarea rows="3" placeholder="请描述故障现象、发生时间与影响..." class="w-full px-3 py-2 text-sm border border-input rounded-md bg-card resize-y focus:outline-none focus:ring-2 focus:ring-ring text-foreground">空压机运行过程中出现压力异常报警，排气压力低于设定值 0.65MPa，频繁启停。</textarea>
+                      </div>
+                      <!-- 处理措施 -->
+                      <div>
+                        <label class="block text-[13px] mb-1.5 text-muted-foreground">处理措施 <span style="color:var(--state-error)">*</span></label>
+                        <textarea rows="3" placeholder="请描述处理过程、更换配件与结果..." class="w-full px-3 py-2 text-sm border border-input rounded-md bg-card resize-y focus:outline-none focus:ring-2 focus:ring-ring text-foreground">停机泄压后更换进气阀组件并清理冷却器，试运行 30 分钟压力恢复正常。</textarea>
+                      </div>
+                      <!-- 更换配件（动态行） -->
+                      <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                          <label class="block text-[13px] text-muted-foreground">更换配件</label>
+                          <button type="button" class="text-xs text-primary hover:underline flex items-center gap-1">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>添加配件</span>
+                          </button>
+                        </div>
+                        <div class="space-y-2">
+                          <div class="grid grid-cols-12 gap-2 text-[11px] text-muted-foreground px-1">
+                            <div class="col-span-5">配件名称</div>
+                            <div class="col-span-2">数量</div>
+                            <div class="col-span-3">单价（元）</div>
+                            <div class="col-span-2 text-right">操作</div>
+                          </div>
+                          <div class="grid grid-cols-12 gap-2">
+                            <input type="text" value="进气阀组件" class="col-span-5 h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                            <input type="number" value="1" min="1" class="col-span-2 h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring numeric">
+                            <input type="number" value="860.00" step="0.01" class="col-span-3 h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring numeric">
+                            <button type="button" class="col-span-2 h-10 flex items-center justify-center gap-1 border border-border rounded-md hover:bg-muted text-muted-foreground" aria-label="删除配件">
+                              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                          </div>
+                          <div class="grid grid-cols-12 gap-2">
+                            <input type="text" value="密封圈" class="col-span-5 h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                            <input type="number" value="4" min="1" class="col-span-2 h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring numeric">
+                            <input type="number" value="12.50" step="0.01" class="col-span-3 h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring numeric">
+                            <button type="button" class="col-span-2 h-10 flex items-center justify-center gap-1 border border-border rounded-md hover:bg-muted text-muted-foreground" aria-label="删除配件">
+                              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- 处理时长 + 处理人 -->
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-[13px] mb-1.5 text-muted-foreground">处理时长 <span style="color:var(--state-error)">*</span></label>
+                          <div class="flex items-center gap-2">
+                            <input type="number" value="2" min="0" class="w-full h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring numeric">
+                            <span class="text-sm text-muted-foreground shrink-0">时</span>
+                            <input type="number" value="30" min="0" max="59" class="w-full h-10 px-3 text-sm border border-input rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-ring numeric">
+                            <span class="text-sm text-muted-foreground shrink-0">分</span>
+                          </div>
+                        </div>
+                        <div>
+                          <label class="block text-[13px] mb-1.5 text-muted-foreground">处理人</label>
+                          <input type="text" value="张工（当前用户）" readonly class="w-full h-10 px-3 text-sm border border-input rounded-md bg-muted text-muted-foreground cursor-not-allowed">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 附件上传 -->
+                  <div class="card-minimal p-5">
+                    <div class="flex items-center gap-2.5 mb-4">
+                      <div class="w-1 h-4 rounded-sm bg-primary"></div>
+                      <i data-lucide="paperclip" class="w-4 h-4 text-muted-foreground"></i>
+                      <h2 class="text-sm font-semibold text-foreground">附件上传</h2>
+                      <span class="text-xs text-muted-foreground">最多 8 个文件</span>
+                    </div>
+                    <div class="border border-dashed border-border rounded-md p-6 flex flex-col items-center justify-center text-muted-foreground gap-1.5 hover:border-primary hover:bg-accent/40 cursor-pointer transition-colors">
+                      <i data-lucide="upload-cloud" class="w-7 h-7"></i>
+                      <div class="text-sm text-foreground">拖拽文件到此处，或<span class="text-primary">点击上传</span></div>
+                      <div class="text-xs">支持 JPG / PNG / PDF / XLSX，单个文件 ≤ 10MB</div>
+                    </div>
+                    <div class="mt-3 space-y-2">
+                      <div class="flex items-center gap-3 px-3 py-2 border border-border rounded-md">
+                        <i data-lucide="file-text" class="w-4 h-4 text-muted-foreground shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-sm text-foreground truncate">现场照片_进气阀.jpg</div>
+                        </div>
+                        <span class="text-xs text-muted-foreground numeric shrink-0">2.4 MB</span>
+                        <button type="button" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground shrink-0" aria-label="删除文件">
+                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                      <div class="flex items-center gap-3 px-3 py-2 border border-border rounded-md">
+                        <i data-lucide="file-text" class="w-4 h-4 text-muted-foreground shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                          <div class="text-sm text-foreground truncate">维修记录单.pdf</div>
+                        </div>
+                        <span class="text-xs text-muted-foreground numeric shrink-0">548 KB</span>
+                        <button type="button" class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground shrink-0" aria-label="删除文件">
+                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 底部操作栏 -->
+                  <div class="flex items-center justify-end gap-2 pt-1 pb-2">
+                    <button type="button" class="h-10 px-4 border border-border rounded-md bg-card text-sm font-medium hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">保存草稿</button>
+                    <button type="submit" data-dom-id="btn-submit" class="h-10 px-5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-ring">
+                      <i data-lucide="send" class="w-4 h-4"></i><span>提交审核</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 右侧提示侧栏 -->
+                <aside class="lg:col-span-1">
+                  <div class="lg:sticky lg:top-0 space-y-4">
+                    <!-- 填写提示 -->
+                    <div class="card-minimal p-5">
+                      <div class="flex items-center gap-2 mb-3">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-primary"></i>
+                        <h3 class="text-sm font-semibold text-foreground">填写提示</h3>
+                        <span class="ml-auto text-xs text-muted-foreground">维修</span>
+                      </div>
+                      <ul class="space-y-2.5 text-sm text-muted-foreground">
+                        <li class="flex items-start gap-2">
+                          <i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0" style="color:var(--state-success)"></i>
+                          <span>准确描述故障现象与发生时间</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0" style="color:var(--state-success)"></i>
+                          <span>记录处理措施与更换配件明细</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0" style="color:var(--state-success)"></i>
+                          <span>上传现场照片便于审核核对</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <i data-lucide="check" class="w-3.5 h-3.5 mt-0.5 shrink-0" style="color:var(--state-success)"></i>
+                          <span>处理时长需如实填写</span>
+                        </li>
+                      </ul>
+                      <a href="#" class="mt-4 flex items-center gap-1 text-xs text-primary hover:underline">
+                        <span>查看填写规范</span>
+                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                      </a>
+                    </div>
+                    <!-- 草稿状态 -->
+                    <div class="card-minimal p-5">
+                      <div class="flex items-center gap-2 mb-3">
+                        <i data-lucide="history" class="w-4 h-4 text-muted-foreground"></i>
+                        <h3 class="text-sm font-semibold text-foreground">草稿状态</h3>
+                      </div>
+                      <div class="space-y-2 text-sm">
+                        <div class="flex items-center justify-between">
+                          <span class="text-muted-foreground">完成度</span>
+                          <span class="text-foreground font-medium numeric">3 / 4</span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div class="h-full bg-primary rounded-full" style="width:75%"></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-1">
+                          <span class="text-xs text-muted-foreground">上次保存</span>
+                          <span class="text-xs text-muted-foreground numeric">2 分钟前</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

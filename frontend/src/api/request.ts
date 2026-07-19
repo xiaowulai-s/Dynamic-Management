@@ -38,17 +38,25 @@ request.interceptors.response.use(
     return response
   },
   (error) => {
+    const url: string = error.config?.url || ''
+    const isAuthEndpoint = url.startsWith('/auth/login') || url.startsWith('/auth/register')
+
     // 处理错误
     if (error.response?.status === 401) {
-      // token过期或无效，清除本地存储并跳转到登录页
-      localStorage.removeItem('token')
-      localStorage.removeItem('userInfo')
-      window.location.href = '/login'
+      // 登录/注册接口的 401 直接抛给调用方显示错误，不要跳转
+      if (!isAuthEndpoint) {
+        // 已经在登录页时不再跳转，避免 401 死循环刷新
+        const isOnLoginPage = window.location.pathname === '/login' || window.location.pathname === '/register'
+        if (!isOnLoginPage) {
+          // token过期或无效，清除本地存储并跳转到登录页
+          localStorage.removeItem('token')
+          localStorage.removeItem('userInfo')
+          window.location.href = '/login'
+        }
+      }
     } else if (error.response?.status === 403) {
       // 权限不足，跳转到403页面或显示提示
       ElMessage.error('权限不足，无法访问该资源')
-      // 可以跳转到专门的403页面
-      // window.location.href = '/403'
     }
 
     return Promise.reject(error)

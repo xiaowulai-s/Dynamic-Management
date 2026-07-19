@@ -4,15 +4,21 @@ import { login as loginApi, getCurrentUser } from '@/api/auth'
 import type { LoginParams, UserInfo } from '@/types'
 
 export const useUserStore = defineStore('user', () => {
-  // 内部状态
+  // 内部状态 - 从 localStorage 恢复
   const token = ref(localStorage.getItem('token') || '')
-  const userInfo = ref<UserInfo | null>(null)
+  const userInfo = ref<UserInfo | null>((() => {
+    const stored = localStorage.getItem('userInfo')
+    try { return stored ? JSON.parse(stored) : null } catch { return null }
+  })())
 
   // 计算属性
   const isAuthenticated = computed(() => !!token.value && !!userInfo.value)
   const username = computed(() => userInfo.value?.username || '')
   const role = computed(() => userInfo.value?.role || '')
-  const isAdmin = computed(() => userInfo.value?.role === 'admin')
+  const isAdmin = computed(() => userInfo.value?.role === 'admin' || userInfo.value?.role === 'super_admin')
+  const isSuperAdmin = computed(() => userInfo.value?.role === 'super_admin')
+  // 普通用户（非 admin、非 super_admin）
+  const isNormalUser = computed(() => userInfo.value?.role === 'user')
 
   // 登录
   const login = async (params: LoginParams) => {
@@ -57,9 +63,9 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('userInfo')
   }
 
-  // 初始化
+  // 初始化 - 有 token 时始终验证有效性
   const init = async () => {
-    if (token.value && !userInfo.value) {
+    if (token.value) {
       await checkAuth()
     }
   }
@@ -71,6 +77,8 @@ export const useUserStore = defineStore('user', () => {
     username,
     role,
     isAdmin,
+    isSuperAdmin,
+    isNormalUser,
     login,
     logout,
     checkAuth,
