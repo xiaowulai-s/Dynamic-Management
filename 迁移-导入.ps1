@@ -112,7 +112,21 @@ if (Test-Path "frontend\dist\index.html") {
 }
 Write-Host ""
 
-Write-Host "[7/7] 重启所有服务使数据生效..." -ForegroundColor Yellow
+Write-Host "[7/8] bcrypt 版本自检（修复 passlib 兼容性）..." -ForegroundColor Yellow
+$bcryptVer = docker exec equipment-backend pip show bcrypt 2>&1 | Select-String "Version"
+Write-Host "      当前: $bcryptVer"
+if ($bcryptVer -match "5\.0") {
+    Write-Host "      [警告] 检测到 bcrypt 5.0，降级到 4.0.1..." -ForegroundColor DarkYellow
+    docker exec equipment-backend pip install "bcrypt==4.0.1" -q 2>&1 | Out-Null
+    docker restart equipment-backend 2>&1 | Out-Null
+    Start-Sleep -Seconds 4
+    Write-Host "      bcrypt 已修复，backend 已重启" -ForegroundColor Green
+} else {
+    Write-Host "      bcrypt 版本正常" -ForegroundColor Green
+}
+Write-Host ""
+
+Write-Host "[8/8] 重启所有服务使数据生效..." -ForegroundColor Yellow
 docker compose restart 2>&1 | Out-Null
 Start-Sleep -Seconds 5
 Write-Host "      服务已重启"

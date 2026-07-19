@@ -80,6 +80,19 @@ docker compose up -d postgres redis backend nginx
 if errorlevel 1 goto :start_failed
 echo       Services started OK
 echo.
+
+REM ===== bcrypt version self-check (fix passlib compatibility) =====
+echo      Checking bcrypt version...
+for /f "tokens=*" %%v in ('docker exec equipment-backend pip show bcrypt 2^>nul ^| findstr "Version"') do set "BCRYPT_VER=%%v"
+echo %BCRYPT_VER% | findstr "5.0" >nul
+if not errorlevel 1 (
+    echo      [WARN] bcrypt 5.0 detected, downgrading to 4.0.1...
+    docker exec equipment-backend pip install "bcrypt==4.0.1" -q
+    docker restart equipment-backend >nul 2>&1
+    echo      bcrypt fixed, backend restarted OK
+)
+echo.
+
 goto :wait_ready
 
 :start_failed
