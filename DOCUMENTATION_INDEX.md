@@ -28,11 +28,11 @@
 7. **[docs/迁移部署指南.md](docs/迁移部署指南.md)** - 系统迁移到其他服务器（含全量数据迁移）
 
 ### 开发文档
-7. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - 项目完成总结
-8. **[DEVELOPMENT_PROGRESS.md](DEVELOPMENT_PROGRESS.md)** - 开发进度追踪
-9. **[CHANGELOG.md](CHANGELOG.md)** - 版本更新日志
-10. **[BUGFIX_LOG.md](BUGFIX_LOG.md)** - Bug 修复记录
-11. **[DESIGN_SYSTEM_QUICK_REFERENCE.md](DESIGN_SYSTEM_QUICK_REFERENCE.md)** - 设计系统参考
+8. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - 项目完成总结
+9. **[DEVELOPMENT_PROGRESS.md](DEVELOPMENT_PROGRESS.md)** - 开发进度追踪
+10. **[CHANGELOG.md](CHANGELOG.md)** - 版本更新日志
+11. **[BUGFIX_LOG.md](BUGFIX_LOG.md)** - Bug 修复记录
+12. **[DESIGN_SYSTEM_QUICK_REFERENCE.md](DESIGN_SYSTEM_QUICK_REFERENCE.md)** - 设计系统参考
 
 ---
 
@@ -63,6 +63,18 @@
     - 代码质量分析
     - 综合评鉴
 
+15. **[docs/README功能对比报告.md](docs/README功能对比报告.md)** - README 描述与实际功能差异对比
+    - 文档描述了但未实现的功能（6 项）
+    - 系统拥有但文档未提及的功能（8 项）
+    - 描述准确的功能清单
+    - 差异处理建议
+
+16. **[docs/迁移包验证报告.md](docs/迁移包验证报告.md)** - 迁移包完整性验证报告
+    - 数据库 18 张表数据一致性验证
+    - 后端代码完整性（13 路由 + 7 模型）
+    - 前端代码完整性（18 页面 + 支撑文件）
+    - 部署配置关键规则验证
+
 ---
 
 ## 📖 快速导航
@@ -92,9 +104,9 @@
 
 | 分类 | 数量 | 总页数（估算） |
 |------|------|---------------|
-| 官方文档 | 11 | 150+ |
-| 测试验证 | 3 | 200+ |
-| 总计 | 14 | 350+ |
+| 官方文档 | 12 | 160+ |
+| 测试验证 | 5 | 230+ |
+| 总计 | 16 | 390+ |
 
 ---
 
@@ -107,12 +119,14 @@
 - 本地部署 → LOCAL_DEPLOYMENT.md
 - 云部署 → TENCENT_CLOUD_DEPLOYMENT.md
 - Docker 安装 → DOCKER_INSTALL.md
+- 系统迁移 → docs/迁移部署指南.md
 
 #### 功能相关
 - 设备管理 → ARCHITECTURE_VERIFICATION.md
 - 日志管理 → ARCHITECTURE_VERIFICATION.md
 - 用户认证 → ARCHITECTURE_VERIFICATION.md
 - 统计分析 → ARCHITECTURE_VERIFICATION.md
+- 功能差异 → docs/README功能对比报告.md
 
 #### 开发相关
 - 项目结构 → PROJECT_SUMMARY.md
@@ -124,13 +138,14 @@
 - 测试清单 → TESTING_CHECKLIST.md
 - 架构验证 → ARCHITECTURE_VERIFICATION.md
 - 验证总结 → VERIFICATION_SUMMARY.md
+- 迁移包验证 → docs/迁移包验证报告.md
 
 ---
 
 ## 📝 文档版本
 
-**最后更新**: 2026-07-17
-**文档版本**: v1.0
+**最后更新**: 2026-07-19
+**文档版本**: v1.1
 **维护者**: Claude Code
 
 ---
